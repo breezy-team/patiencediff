@@ -25,4 +25,5 @@ setup(name="patiencediff",
           'Operating System :: POSIX',
       ],
       ext_modules=[Extension('patiencediff._patiencediff_c',
-          ['patiencediff/_patiencediff_c.c'])])
+          ['patiencediff/_patiencediff_c.c'])]
+)

@@ -109,14 +109,14 @@ def unified_diff_files(a, b, sequencematcher=None):
         file_a = sys.stdin
         time_a = time.time()
     else:
-        file_a = open(a, 'rb')
+        file_a = open(a, 'r')
         time_a = os.stat(a).st_mtime
 
     if b == '-':
         file_b = sys.stdin
         time_b = time.time()
     else:
-        file_b = open(b, 'rb')
+        file_b = open(b, 'r')
         time_b = os.stat(b).st_mtime
 
     # TODO: Include fromfiledate and tofiledate

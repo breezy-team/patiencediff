@@ -14,9 +14,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import patiencediff
+import shutil
+import sys
+import tempfile
 import unittest
 
-from . import _patiencediff_c, _patiencediff_py
+from . import _patiencediff_py
+
+
+if sys.version_info[0] == 3:
+    unichr = chr
 
 
 class TestPatienceDiffLib(unittest.TestCase):
@@ -411,11 +419,12 @@ pynff pzq_zxqve(Pbzznaq):
 
 class TestPatienceDiffLib_c(TestPatienceDiffLib):
 
-    # TODO(jelmer): _test_needs_features = [features.compiled_patiencediff_feature]
-
     def setUp(self):
         super(TestPatienceDiffLib_c, self).setUp()
-        from . import _patiencediff_c
+        try:
+            from . import _patiencediff_c
+        except ImportError:
+            self.skipTest('C extension not built')
         self._unique_lcs = _patiencediff_c.unique_lcs_c
         self._recurse_matches = _patiencediff_c.recurse_matches_c
         self._PatienceSequenceMatcher = \
@@ -435,12 +444,14 @@ class TestPatienceDiffLib_c(TestPatienceDiffLib):
                                          None, ['valid'], ['valid', []])
 
 
-class TestPatienceDiffLibFiles(unittest.TestCaseInTempDir):
+class TestPatienceDiffLibFiles(unittest.TestCase):
 
     def setUp(self):
         super(TestPatienceDiffLibFiles, self).setUp()
         self._PatienceSequenceMatcher = \
             _patiencediff_py.PatienceSequenceMatcher_py
+        self.test_dir = tempfile.mkdtemp()
+        self.addCleanup(lambda: shutil.rmtree(self.test_dir))
 
     def test_patience_unified_diff_files(self):
         txt_a = [b'hello there\n',
@@ -465,8 +476,8 @@ class TestPatienceDiffLibFiles(unittest.TestCaseInTempDir):
 
         txt_a = [x+'\n' for x in 'abcdefghijklmnop']
         txt_b = [x+'\n' for x in 'abcdefxydefghijklmnop']
-        with open('a2', 'wb') as f: f.writelines(txt_a)
-        with open('b2', 'wb') as f: f.writelines(txt_b)
+        with open('a2', 'w') as f: f.writelines(txt_a)
+        with open('b2', 'w') as f: f.writelines(txt_b)
 
         # This is the result with LongestCommonSubstring matching
         self.assertEqual(['--- a2\n',
@@ -506,11 +517,12 @@ class TestPatienceDiffLibFiles(unittest.TestCaseInTempDir):
 
 class TestPatienceDiffLibFiles_c(TestPatienceDiffLibFiles):
 
-    _test_needs_features = [features.compiled_patiencediff_feature]
-
     def setUp(self):
         super(TestPatienceDiffLibFiles_c, self).setUp()
-        from . import _patiencediff_c
+        try:
+            from . import _patiencediff_c
+        except ImportError:
+            self.skipTest('C extension not built')
         self._PatienceSequenceMatcher = \
             _patiencediff_c.PatienceSequenceMatcher_c
 
@@ -518,32 +530,35 @@ class TestPatienceDiffLibFiles_c(TestPatienceDiffLibFiles):
 class TestUsingCompiledIfAvailable(unittest.TestCase):
 
     def test_PatienceSequenceMatcher(self):
-        if features.compiled_patiencediff_feature.available():
+        try:
             from ._patiencediff_c import PatienceSequenceMatcher_c
-            self.assertIs(PatienceSequenceMatcher_c,
-                          patiencediff.PatienceSequenceMatcher)
-        else:
+        except ImportError:
             from ._patiencediff_py import PatienceSequenceMatcher_py
             self.assertIs(PatienceSequenceMatcher_py,
                           patiencediff.PatienceSequenceMatcher)
+        else:
+            self.assertIs(PatienceSequenceMatcher_c,
+                          patiencediff.PatienceSequenceMatcher)
 
     def test_unique_lcs(self):
-        if features.compiled_patiencediff_feature.available():
+        try:
             from ._patiencediff_c import unique_lcs_c
-            self.assertIs(unique_lcs_c,
-                          patiencediff.unique_lcs)
-        else:
+        except ImportError:
             from ._patiencediff_py import unique_lcs_py
             self.assertIs(unique_lcs_py,
                           patiencediff.unique_lcs)
+        else:
+            self.assertIs(unique_lcs_c,
+                          patiencediff.unique_lcs)
 
     def test_recurse_matches(self):
-        if features.compiled_patiencediff_feature.available():
+        try:
             from ._patiencediff_c import recurse_matches_c
-            self.assertIs(recurse_matches_c,
-                          patiencediff.recurse_matches)
-        else:
+        except ImportError:
             from ._patiencediff_py import recurse_matches_py
             self.assertIs(recurse_matches_py,
+                          patiencediff.recurse_matches)
+        else:
+            self.assertIs(recurse_matches_c,
                           patiencediff.recurse_matches)
 
