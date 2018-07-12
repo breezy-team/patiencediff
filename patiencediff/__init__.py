@@ -106,21 +106,23 @@ def unified_diff_files(a, b, sequencematcher=None):
     if a == b:
         return []
     if a == '-':
-        file_a = sys.stdin
+        lines_a = sys.stdin.readlines()
         time_a = time.time()
     else:
-        file_a = open(a, 'r')
+        with open(a, 'r') as f:
+            lines_a = f.readlines()
         time_a = os.stat(a).st_mtime
 
     if b == '-':
-        file_b = sys.stdin
+        lines_b = sys.stdin.readlines()
         time_b = time.time()
     else:
-        file_b = open(b, 'r')
+        with open(b, 'r') as f:
+            lines_b = f.readlines()
         time_b = os.stat(b).st_mtime
 
     # TODO: Include fromfiledate and tofiledate
-    return unified_diff(file_a.readlines(), file_b.readlines(),
+    return unified_diff(lines_a, lines_b,
                         fromfile=a, tofile=b,
                         sequencematcher=sequencematcher)
 
