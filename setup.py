@@ -3,9 +3,14 @@
 
 from setuptools import setup, Extension
 
+with open('README.rst', 'r') as f:
+    long_description = f.read()
+
 setup(name="patiencediff",
       description="Python implementation of the patiencediff algorithm.",
-      version="0.0.2",
+      long_description=long_description,
+      long_description_content_type='text/x-rst',
+      version="0.0.3",
       maintainer="Breezy Developers",
       maintainer_email="team@breezy-vcs.org",
       license="GNU GPLv2 or later",
