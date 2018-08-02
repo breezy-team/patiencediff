@@ -5,7 +5,7 @@ from setuptools import setup, Extension
 
 setup(name="patiencediff",
       description="Python implementation of the patiencediff algorithm.",
-      version="0.0.1",
+      version="0.0.2",
       maintainer="Breezy Developers",
       maintainer_email="team@breezy-vcs.org",
       license="GNU GPLv2 or later",

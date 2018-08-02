@@ -13,11 +13,11 @@ code base.
 
 The package comes with two implementations:
 
- * A Python implementation (_patiencediff_py.py); this implementation only
-   requires a Python interpreter and is the more readable version of the two
+* A Python implementation (_patiencediff_py.py); this implementation only
+  requires a Python interpreter and is the more readable version of the two
 
- * A C implementation implementation (_patiencediff_c.c); this implementation
-   is faster, but requires a C compiler and is less readable
+* A C implementation implementation (_patiencediff_c.c); this implementation
+  is faster, but requires a C compiler and is less readable
 
 Usage
 =====
@@ -32,11 +32,11 @@ Or from Python:
      >>> print ''.join(patiencediff.unified_diff(
      ...      ['a\n', 'b\n', 'b\n', 'c\n'],
      ...      ['a\n', 'c\n', 'b\n']))
---- 
-+++ 
-@@ -1,4 +1,3 @@
- a
-+c
- b
--b
--c
+     --- 
+     +++ 
+     @@ -1,4 +1,3 @@
+      a
+     +c
+      b
+     -b
+     -c
