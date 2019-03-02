@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import os
 import patiencediff
 import shutil
 import sys
@@ -459,8 +460,9 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
                  b'how are you today?\n']
         txt_b = [b'hello there\n',
                  b'how are you today?\n']
-        with open('a1', 'wb') as f: f.writelines(txt_a)
-        with open('b1', 'wb') as f: f.writelines(txt_b)
+        with open(os.path.join(self.test_dir, 'a1'), 'wb') as f:
+            f.writelines(txt_a)
+        with open(os.path.join(self.test_dir, 'b1'), 'wb') as f: f.writelines(txt_b)
 
         unified_diff_files = patiencediff.unified_diff_files
         psm = self._PatienceSequenceMatcher
