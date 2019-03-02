@@ -1,2 +1,4 @@
 build
 patiencediff.egg-info
+dist/
+*~
