@@ -466,55 +466,67 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
 
         unified_diff_files = patiencediff.unified_diff_files
         psm = self._PatienceSequenceMatcher
-        self.assertEqual(['--- a1\n',
-                           '+++ b1\n',
-                           '@@ -1,3 +1,2 @@\n',
-                           ' hello there\n',
-                           '-world\n',
-                           ' how are you today?\n',
-                          ]
-                          , list(unified_diff_files('a1', 'b1',
-                                 sequencematcher=psm)))
+
+        old_pwd = os.getcwd()
+        os.chdir(self.test_dir)
+        try:
+            self.assertEqual(['--- a1\n',
+                               '+++ b1\n',
+                               '@@ -1,3 +1,2 @@\n',
+                               ' hello there\n',
+                               '-world\n',
+                               ' how are you today?\n',
+                              ]
+                              , list(unified_diff_files('a1', 'b1',
+                                     sequencematcher=psm)))
+        finally:
+            os.chdir(old_pwd)
 
         txt_a = [x+'\n' for x in 'abcdefghijklmnop']
         txt_b = [x+'\n' for x in 'abcdefxydefghijklmnop']
-        with open('a2', 'w') as f: f.writelines(txt_a)
-        with open('b2', 'w') as f: f.writelines(txt_b)
+        with open(os.path.join(self.test_dir, 'a2'), 'w') as f:
+            f.writelines(txt_a)
+        with open(os.path.join(self.test_dir, 'b2'), 'w') as f:
+            f.writelines(txt_b)
 
         # This is the result with LongestCommonSubstring matching
-        self.assertEqual(['--- a2\n',
-                           '+++ b2\n',
-                           '@@ -1,6 +1,11 @@\n',
-                           ' a\n',
-                           ' b\n',
-                           ' c\n',
-                           '+d\n',
-                           '+e\n',
-                           '+f\n',
-                           '+x\n',
-                           '+y\n',
-                           ' d\n',
-                           ' e\n',
-                           ' f\n']
-                          , list(unified_diff_files('a2', 'b2')))
+        os.chdir(self.test_dir)
+        try:
+            self.assertEqual(['--- a2\n',
+                               '+++ b2\n',
+                               '@@ -1,6 +1,11 @@\n',
+                               ' a\n',
+                               ' b\n',
+                               ' c\n',
+                               '+d\n',
+                               '+e\n',
+                               '+f\n',
+                               '+x\n',
+                               '+y\n',
+                               ' d\n',
+                               ' e\n',
+                               ' f\n']
+                              , list(unified_diff_files('a2', 'b2')))
 
-        # And the patience diff
-        self.assertEqual(['--- a2\n',
-                          '+++ b2\n',
-                          '@@ -4,6 +4,11 @@\n',
-                          ' d\n',
-                          ' e\n',
-                          ' f\n',
-                          '+x\n',
-                          '+y\n',
-                          '+d\n',
-                          '+e\n',
-                          '+f\n',
-                          ' g\n',
-                          ' h\n',
-                          ' i\n'],
-                         list(unified_diff_files('a2', 'b2',
-                                                 sequencematcher=psm)))
+            # And the patience diff
+            self.assertEqual(['--- a2\n',
+                              '+++ b2\n',
+                              '@@ -4,6 +4,11 @@\n',
+                              ' d\n',
+                              ' e\n',
+                              ' f\n',
+                              '+x\n',
+                              '+y\n',
+                              '+d\n',
+                              '+e\n',
+                              '+f\n',
+                              ' g\n',
+                              ' h\n',
+                              ' i\n'],
+                             list(unified_diff_files('a2', 'b2',
+                                                     sequencematcher=psm)))
+        finally:
+            os.chdir(old_pwd)
 
 
 class TestPatienceDiffLibFiles_c(TestPatienceDiffLibFiles):
