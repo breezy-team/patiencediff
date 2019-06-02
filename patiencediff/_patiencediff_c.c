@@ -48,7 +48,7 @@
  * causing <https://bugs.launchpad.net/bzr/+bug/511267> and
  * <https://bugs.launchpad.net/bzr/+bug/331095>.  On glibc it passes, but
  * let's make it fail to aid testing. */
-#define guarded_malloc(x) ( (x) ? malloc(x) : NULL )
+#define guarded_malloc(x) ( ((x) > 0) ? malloc(x) : NULL )
 
 enum {
     OP_EQUAL = 0,
@@ -1167,14 +1167,45 @@ static char PatienceSequenceMatcher_doc[] =
 
 
 static PyTypeObject PatienceSequenceMatcherType = {
-    PyObject_HEAD_INIT(NULL)
-    .tp_name = "PatienceSequenceMatcher",
-    .tp_basicsize = sizeof(PatienceSequenceMatcher),
-    .tp_dealloc = (destructor)PatienceSequenceMatcher_dealloc,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = PatienceSequenceMatcher_doc,
-    .tp_methods = PatienceSequenceMatcher_methods,
-    .tp_new = PatienceSequenceMatcher_new,
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "PatienceSequenceMatcher",  /* tp_name */
+    sizeof(PatienceSequenceMatcher), /* tp_basicsize */
+    0, /* tp_itemsize */
+    (destructor)PatienceSequenceMatcher_dealloc, /* tp_dealloc */
+    NULL, /* tp_print */
+    NULL, /* tp_getattr */
+    NULL, /* tp_setattr */
+    NULL, /* tp_compare */
+    NULL, /* tp_repr */
+    NULL, /* tp_as_number */
+    NULL, /* tp_as_sequence */
+    NULL, /* tp_as_mapping */
+    NULL, /* tp_hash */
+    NULL, /* tp_call */
+    NULL, /* tp_str */
+    NULL, /* tp_getattro */
+    NULL, /* tp_setattro */
+    NULL, /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT, /* tp_flags */
+    PatienceSequenceMatcher_doc, /* tp_doc */
+    NULL, /* tp_traverse */
+    NULL, /* tp_clear */
+    NULL, /* tp_richcompare */
+    0, /* tp_weaklistoffset */
+    NULL, /* tp_iter */
+    NULL, /* tp_iternext */
+    PatienceSequenceMatcher_methods, /* tp_methods */
+    NULL, /* tp_members */
+    NULL, /* tp_getset */
+    NULL, /* tp_base */
+    NULL, /* tp_dict */
+    NULL, /* tp_descr_get */
+    NULL, /* tp_descr_set */
+    0, /* tp_dictoffset */
+    NULL, /* tp_init */
+    NULL, /* tp_alloc */
+    PatienceSequenceMatcher_new, /* NULL */
+    NULL, /* tp_free */
 };
 
 
