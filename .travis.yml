@@ -8,14 +8,28 @@ python:
 - 3.5-dev
 - 3.6
 - 3.6-dev
+- pypy
 - pypy3.5
 env:
 - PYTHONHASHSEED=random
+  PURE=false
+matrix:
+  include:
+    - python: 3.6
+      env: PURE=true
+    - python: 2.7
+      env: PURE=true
+    - python: pypy3.5
+      env: PURE=true
+    - python: pypy
+      env: PURE=true
 install:
 - travis_retry pip install -U pip setuptools
 script:
+- if [ $PURE = false ]; then python setup.py build_ext -i; fi
 - python -m unittest patiencediff.test_patiencediff
-- python setup.py bdist_wheel
+- if [ $PURE = true ]; then SETUP_ARGS=--pure; fi
+- python setup.py $SETUP_ARGS bdist_wheel
 deploy:
   provider: pypi
   user: breezy-bot
