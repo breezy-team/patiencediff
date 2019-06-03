@@ -3,7 +3,7 @@ environment:
   TWINE_USERNAME: "breezy-bot"
   TWINE_PASSWORD:
     # See https://www.appveyor.com/docs/build-configuration/#secure-variables
-    secure: e7DTu4CwOCARfN/mwA8lXQ==
+    secure: Y7sAxfNInbecxBmDW4DIMw==
 
   matrix:
 
