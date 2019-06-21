@@ -32,7 +32,6 @@ class Distribution(core.Distribution):
 setup(name="patiencediff",
       description="Python implementation of the patiencediff algorithm.",
       long_description=long_description,
-      long_description_content_type='text/x-rst',
       version="0.1.0",
       maintainer="Breezy Developers",
       maintainer_email="team@breezy-vcs.org",
