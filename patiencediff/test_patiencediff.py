@@ -52,10 +52,12 @@ class TestPatienceDiffLib(unittest.TestCase):
         self.assertEqual(unique_lcs('a', 'a'), [(0, 0)])
         self.assertEqual(unique_lcs('a', 'b'), [])
         self.assertEqual(unique_lcs('ab', 'ab'), [(0, 0), (1, 1)])
-        self.assertEqual(unique_lcs('abcde', 'cdeab'), [(2, 0), (3, 1), (4, 2)])
-        self.assertEqual(unique_lcs('cdeab', 'abcde'), [(0, 2), (1, 3), (2, 4)])
-        self.assertEqual(unique_lcs('abXde', 'abYde'), [(0, 0), (1, 1),
-                                                         (3, 3), (4, 4)])
+        self.assertEqual(
+            unique_lcs('abcde', 'cdeab'), [(2, 0), (3, 1), (4, 2)])
+        self.assertEqual(
+            unique_lcs('cdeab', 'abcde'), [(0, 2), (1, 3), (2, 4)])
+        self.assertEqual(
+            unique_lcs('abXde', 'abYde'), [(0, 0), (1, 1), (3, 3), (4, 4)])
         self.assertEqual(unique_lcs('acbac', 'abc'), [(2, 1)])
 
     def test_recurse_matches(self):
@@ -80,7 +82,7 @@ class TestPatienceDiffLib(unittest.TestCase):
         # The update has been done in patiencediff.SequenceMatcher instead
 
         # This is what it could be
-        #test_one('aBccDe', 'abccde', [(0,0), (2,2), (3,3), (5,5)])
+        # test_one('aBccDe', 'abccde', [(0,0), (2,2), (3,3), (5,5)])
 
         # This is what it currently gives:
         test_one('aBccDe', 'abccde', [(0, 0), (5, 5)])
@@ -122,26 +124,28 @@ class TestPatienceDiffLib(unittest.TestCase):
 
         # make sure it supports passing in lists
         self.assertDiffBlocks(
-                   ['hello there\n',
-                    'world\n',
-                    'how are you today?\n'],
-                   ['hello there\n',
-                    'how are you today?\n'],
-                [(0, 0, 1), (2, 1, 1)])
+               ['hello there\n',
+                'world\n',
+                'how are you today?\n'],
+               ['hello there\n',
+                'how are you today?\n'],
+               [(0, 0, 1), (2, 1, 1)])
 
         # non unique lines surrounded by non-matching lines
         # won't be found
         self.assertDiffBlocks('aBccDe', 'abccde', [(0, 0, 1), (5, 5, 1)])
 
         # But they only need to be locally unique
-        self.assertDiffBlocks('aBcDec', 'abcdec', [(0, 0, 1), (2, 2, 1), (4, 4, 2)])
+        self.assertDiffBlocks(
+            'aBcDec', 'abcdec', [(0, 0, 1), (2, 2, 1), (4, 4, 2)])
 
         # non unique blocks won't be matched
         self.assertDiffBlocks('aBcdEcdFg', 'abcdecdfg', [(0, 0, 1), (8, 8, 1)])
 
         # but locally unique ones will
-        self.assertDiffBlocks('aBcdEeXcdFg', 'abcdecdfg', [(0, 0, 1), (2, 2, 2),
-                                              (5, 4, 1), (7, 5, 2), (10, 8, 1)])
+        self.assertDiffBlocks(
+            'aBcdEeXcdFg', 'abcdecdfg',
+            [(0, 0, 1), (2, 2, 2), (5, 4, 1), (7, 5, 2), (10, 8, 1)])
 
         self.assertDiffBlocks('abbabbXd', 'cabbabxd', [(7, 7, 1)])
         self.assertDiffBlocks('abbabbbb', 'cabbabbc', [])
@@ -183,58 +187,55 @@ class TestPatienceDiffLib(unittest.TestCase):
         chk_ops('abcd', 'abcd', [('equal',    0, 4, 0, 4)])
         chk_ops('abcd', 'abce', [('equal',   0, 3, 0, 3),
                                  ('replace', 3, 4, 3, 4)
-                                ])
+                                 ])
         chk_ops('eabc', 'abce', [('delete', 0, 1, 0, 0),
                                  ('equal',  1, 4, 0, 3),
                                  ('insert', 4, 4, 3, 4)
-                                ])
+                                 ])
         chk_ops('eabce', 'abce', [('delete', 0, 1, 0, 0),
                                   ('equal',  1, 5, 0, 4)
-                                 ])
+                                  ])
         chk_ops('abcde', 'abXde', [('equal',   0, 2, 0, 2),
                                    ('replace', 2, 3, 2, 3),
                                    ('equal',   3, 5, 3, 5)
-                                  ])
+                                   ])
         chk_ops('abcde', 'abXYZde', [('equal',   0, 2, 0, 2),
                                      ('replace', 2, 3, 2, 5),
                                      ('equal',   3, 5, 5, 7)
-                                    ])
+                                     ])
         chk_ops('abde', 'abXYZde', [('equal',  0, 2, 0, 2),
                                     ('insert', 2, 2, 2, 5),
                                     ('equal',  2, 4, 5, 7)
-                                   ])
+                                    ])
         chk_ops('abcdefghijklmnop', 'abcdefxydefghijklmnop',
                 [('equal',  0, 6,  0, 6),
                  ('insert', 6, 6,  6, 11),
                  ('equal',  6, 16, 11, 21)
-                ])
+                 ])
         chk_ops(
-                [ 'hello there\n'
-                , 'world\n'
-                , 'how are you today?\n'],
-                [ 'hello there\n'
-                , 'how are you today?\n'],
+                ['hello there\n', 'world\n', 'how are you today?\n'],
+                ['hello there\n', 'how are you today?\n'],
                 [('equal',  0, 1, 0, 1),
                  ('delete', 1, 2, 1, 1),
                  ('equal',  2, 3, 1, 2),
-                ])
+                 ])
         chk_ops('aBccDe', 'abccde',
                 [('equal',   0, 1, 0, 1),
                  ('replace', 1, 5, 1, 5),
                  ('equal',   5, 6, 5, 6),
-                ])
+                 ])
         chk_ops('aBcDec', 'abcdec',
                 [('equal',   0, 1, 0, 1),
                  ('replace', 1, 2, 1, 2),
                  ('equal',   2, 3, 2, 3),
                  ('replace', 3, 4, 3, 4),
                  ('equal',   4, 6, 4, 6),
-                ])
+                 ])
         chk_ops('aBcdEcdFg', 'abcdecdfg',
                 [('equal',   0, 1, 0, 1),
                  ('replace', 1, 8, 1, 8),
                  ('equal',   8, 9, 8, 9)
-                ])
+                 ])
         chk_ops('aBcdEeXcdFg', 'abcdecdfg',
                 [('equal',   0, 1, 0, 1),
                  ('replace', 1, 2, 1, 2),
@@ -245,7 +246,7 @@ class TestPatienceDiffLib(unittest.TestCase):
                  ('equal',   7, 9, 5, 7),
                  ('replace', 9, 10, 7, 8),
                  ('equal',   10, 11, 8, 9)
-                ])
+                 ])
 
     def test_grouped_opcodes(self):
         def chk_ops(a, b, expected_codes, n=3):
@@ -259,11 +260,10 @@ class TestPatienceDiffLib(unittest.TestCase):
         chk_ops('abcd', 'abcd', [])
         chk_ops('abcd', 'abce', [[('equal',   0, 3, 0, 3),
                                   ('replace', 3, 4, 3, 4)
-                                 ]])
+                                  ]])
         chk_ops('eabc', 'abce', [[('delete', 0, 1, 0, 0),
                                  ('equal',  1, 4, 0, 3),
-                                 ('insert', 4, 4, 3, 4)
-                                ]])
+                                 ('insert', 4, 4, 3, 4)]])
         chk_ops('abcdefghijklmnop', 'abcdefxydefghijklmnop',
                 [[('equal',  3, 6, 3, 6),
                   ('insert', 6, 6, 6, 11),
@@ -282,7 +282,6 @@ class TestPatienceDiffLib(unittest.TestCase):
                 [[('equal',  3, 6, 3, 6),
                   ('insert', 6, 6, 6, 7)
                   ]])
-
 
     def test_multiple_ranges(self):
         # There was an earlier bug where we used a bad set of ranges,
@@ -339,8 +338,7 @@ pynff pzq_zxqve(Pbzznaq):
 
 
 pynff pzq_zxqve(Pbzznaq):
-'''.splitlines(True)
-, [(0, 0, 1), (1, 4, 2), (9, 19, 1), (12, 23, 3)])
+'''.splitlines(True), [(0, 0, 1), (1, 4, 2), (9, 19, 1), (12, 23, 3)])
 
     def test_patience_unified_diff(self):
         txt_a = ['hello there\n',
@@ -351,50 +349,47 @@ pynff pzq_zxqve(Pbzznaq):
         unified_diff = patiencediff.unified_diff
         psm = self._PatienceSequenceMatcher
         self.assertEqual(['--- \n',
-                           '+++ \n',
-                           '@@ -1,3 +1,2 @@\n',
-                           ' hello there\n',
-                           '-world\n',
-                           ' how are you today?\n'
-                          ]
-                          , list(unified_diff(txt_a, txt_b,
-                                 sequencematcher=psm)))
+                          '+++ \n',
+                          '@@ -1,3 +1,2 @@\n',
+                          ' hello there\n',
+                          '-world\n',
+                          ' how are you today?\n'
+                          ], list(unified_diff(
+                             txt_a, txt_b, sequencematcher=psm)))
         txt_a = [x+'\n' for x in 'abcdefghijklmnop']
         txt_b = [x+'\n' for x in 'abcdefxydefghijklmnop']
         # This is the result with LongestCommonSubstring matching
         self.assertEqual(['--- \n',
-                           '+++ \n',
-                           '@@ -1,6 +1,11 @@\n',
-                           ' a\n',
-                           ' b\n',
-                           ' c\n',
-                           '+d\n',
-                           '+e\n',
-                           '+f\n',
-                           '+x\n',
-                           '+y\n',
-                           ' d\n',
-                           ' e\n',
-                           ' f\n']
-                          , list(unified_diff(txt_a, txt_b)))
+                          '+++ \n',
+                          '@@ -1,6 +1,11 @@\n',
+                          ' a\n',
+                          ' b\n',
+                          ' c\n',
+                          '+d\n',
+                          '+e\n',
+                          '+f\n',
+                          '+x\n',
+                          '+y\n',
+                          ' d\n',
+                          ' e\n',
+                          ' f\n'], list(unified_diff(txt_a, txt_b)))
         # And the patience diff
         self.assertEqual(['--- \n',
-                           '+++ \n',
-                           '@@ -4,6 +4,11 @@\n',
-                           ' d\n',
-                           ' e\n',
-                           ' f\n',
-                           '+x\n',
-                           '+y\n',
-                           '+d\n',
-                           '+e\n',
-                           '+f\n',
-                           ' g\n',
-                           ' h\n',
-                           ' i\n',
-                          ]
-                          , list(unified_diff(txt_a, txt_b,
-                                 sequencematcher=psm)))
+                          '+++ \n',
+                          '@@ -4,6 +4,11 @@\n',
+                          ' d\n',
+                          ' e\n',
+                          ' f\n',
+                          '+x\n',
+                          '+y\n',
+                          '+d\n',
+                          '+e\n',
+                          '+f\n',
+                          ' g\n',
+                          ' h\n',
+                          ' i\n',
+                          ], list(unified_diff(
+                              txt_a, txt_b, sequencematcher=psm)))
 
     def test_patience_unified_diff_with_dates(self):
         txt_a = ['hello there\n',
@@ -405,17 +400,16 @@ pynff pzq_zxqve(Pbzznaq):
         unified_diff = patiencediff.unified_diff
         psm = self._PatienceSequenceMatcher
         self.assertEqual(['--- a\t2008-08-08\n',
-                           '+++ b\t2008-09-09\n',
-                           '@@ -1,3 +1,2 @@\n',
-                           ' hello there\n',
-                           '-world\n',
-                           ' how are you today?\n'
-                          ]
-                          , list(unified_diff(txt_a, txt_b,
-                                 fromfile='a', tofile='b',
-                                 fromfiledate='2008-08-08',
-                                 tofiledate='2008-09-09',
-                                 sequencematcher=psm)))
+                          '+++ b\t2008-09-09\n',
+                          '@@ -1,3 +1,2 @@\n',
+                          ' hello there\n',
+                          '-world\n',
+                          ' how are you today?\n'
+                          ], list(unified_diff(
+                              txt_a, txt_b, fromfile='a', tofile='b',
+                              fromfiledate='2008-08-08',
+                              tofiledate='2008-09-09',
+                              sequencematcher=psm)))
 
 
 class TestPatienceDiffLib_c(TestPatienceDiffLib):
@@ -435,14 +429,16 @@ class TestPatienceDiffLib_c(TestPatienceDiffLib):
         """We should get a proper exception here."""
         # We need to be able to hash items in the sequence, lists are
         # unhashable, and thus cannot be diffed
-        e = self.assertRaises(TypeError, self._PatienceSequenceMatcher,
-                                         None, [[]], [])
-        e = self.assertRaises(TypeError, self._PatienceSequenceMatcher,
-                                         None, ['valid', []], [])
-        e = self.assertRaises(TypeError, self._PatienceSequenceMatcher,
-                                         None, ['valid'], [[]])
-        e = self.assertRaises(TypeError, self._PatienceSequenceMatcher,
-                                         None, ['valid'], ['valid', []])
+        self.assertRaises(
+            TypeError, self._PatienceSequenceMatcher, None, [[]], [])
+        self.assertRaises(
+            TypeError, self._PatienceSequenceMatcher, None,
+            ['valid', []], [])
+        self.assertRaises(
+            TypeError, self._PatienceSequenceMatcher, None, ['valid'], [[]])
+        self.assertRaises(
+            TypeError, self._PatienceSequenceMatcher, None, ['valid'],
+            ['valid', []])
 
 
 class TestPatienceDiffLibFiles(unittest.TestCase):
@@ -462,7 +458,8 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
                  b'how are you today?\n']
         with open(os.path.join(self.test_dir, 'a1'), 'wb') as f:
             f.writelines(txt_a)
-        with open(os.path.join(self.test_dir, 'b1'), 'wb') as f: f.writelines(txt_b)
+        with open(os.path.join(self.test_dir, 'b1'), 'wb') as f:
+            f.writelines(txt_b)
 
         unified_diff_files = patiencediff.unified_diff_files
         psm = self._PatienceSequenceMatcher
@@ -471,14 +468,13 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
         os.chdir(self.test_dir)
         try:
             self.assertEqual(['--- a1\n',
-                               '+++ b1\n',
-                               '@@ -1,3 +1,2 @@\n',
-                               ' hello there\n',
-                               '-world\n',
-                               ' how are you today?\n',
-                              ]
-                              , list(unified_diff_files('a1', 'b1',
-                                     sequencematcher=psm)))
+                              '+++ b1\n',
+                              '@@ -1,3 +1,2 @@\n',
+                              ' hello there\n',
+                              '-world\n',
+                              ' how are you today?\n',
+                              ], list(unified_diff_files(
+                                  'a1', 'b1', sequencematcher=psm)))
         finally:
             os.chdir(old_pwd)
 
@@ -493,20 +489,19 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
         os.chdir(self.test_dir)
         try:
             self.assertEqual(['--- a2\n',
-                               '+++ b2\n',
-                               '@@ -1,6 +1,11 @@\n',
-                               ' a\n',
-                               ' b\n',
-                               ' c\n',
-                               '+d\n',
-                               '+e\n',
-                               '+f\n',
-                               '+x\n',
-                               '+y\n',
-                               ' d\n',
-                               ' e\n',
-                               ' f\n']
-                              , list(unified_diff_files('a2', 'b2')))
+                              '+++ b2\n',
+                              '@@ -1,6 +1,11 @@\n',
+                              ' a\n',
+                              ' b\n',
+                              ' c\n',
+                              '+d\n',
+                              '+e\n',
+                              '+f\n',
+                              '+x\n',
+                              '+y\n',
+                              ' d\n',
+                              ' e\n',
+                              ' f\n'], list(unified_diff_files('a2', 'b2')))
 
             # And the patience diff
             self.assertEqual(['--- a2\n',
@@ -575,4 +570,3 @@ class TestUsingCompiledIfAvailable(unittest.TestCase):
         else:
             self.assertIs(recurse_matches_c,
                           patiencediff.recurse_matches)
-

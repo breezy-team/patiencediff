@@ -50,5 +50,4 @@ setup(name="patiencediff",
           'Programming Language :: Python :: Implementation :: PyPy',
           'Operating System :: POSIX',
       ],
-      ext_modules=ext_modules,
-)
+      ext_modules=ext_modules)

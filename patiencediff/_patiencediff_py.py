@@ -21,9 +21,6 @@ from bisect import bisect
 import difflib
 
 
-__all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
-
-
 class MaxRecursionDepth(Exception):
 
     def __init__(self):
@@ -51,7 +48,7 @@ def unique_lcs_py(a, b):
         if line in index:
             index[line] = None
         else:
-            index[line]= i
+            index[line] = i
     # make btoa[i] = position of line i in a, unless
     # that line doesn't occur exactly once in both,
     # in which case it's set to None
@@ -138,7 +135,8 @@ def recurse_matches_py(a, b, alo, blo, ahi, bhi, answer, maxrecursion):
         bpos += blo
         # Most of the time, you will have a sequence of similar entries
         if last_a_pos+1 != apos or last_b_pos+1 != bpos:
-            recurse_matches_py(a, b, last_a_pos+1, last_b_pos+1,
+            recurse_matches_py(
+                a, b, last_a_pos+1, last_b_pos+1,
                 apos, bpos, answer, maxrecursion - 1)
         last_a_pos = apos
         last_b_pos = bpos
@@ -179,8 +177,8 @@ def _collapse_sequences(matches):
     length = 0
     for i_a, i_b in matches:
         if (start_a is not None
-            and (i_a == start_a + length)
-            and (i_b == start_b + length)):
+                and (i_a == start_a + length)
+                and (i_b == start_b + length)):
             length += 1
         else:
             if start_a is not None:
@@ -247,7 +245,7 @@ class PatienceSequenceMatcher_py(difflib.SequenceMatcher):
         # Matches now has individual line pairs of
         # line A matches line B, at the given offsets
         self.matching_blocks = _collapse_sequences(matches)
-        self.matching_blocks.append( (len(self.a), len(self.b), 0) )
+        self.matching_blocks.append((len(self.a), len(self.b), 0))
         if PatienceSequenceMatcher_py._do_check_consistency:
             if __debug__:
                 _check_consistency(self.matching_blocks)
