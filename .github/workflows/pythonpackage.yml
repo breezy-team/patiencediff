@@ -28,6 +28,8 @@ jobs:
     - name: Build
       run: |
         python setup.py build_ext -i
+      # Building C extensions doesn't work for Python 2.7 on Windows. 
+      if: "!(matrix.os == 'windows-latest' && matrix.python-version == '2.7')"
     - name: Test suite run
       run: |
         python -m unittest patiencediff.test_patiencediff
