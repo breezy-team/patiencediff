@@ -1,0 +1,34 @@
+name: Python package
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy3]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install -U pip flake8 setuptools
+    - name: Style checks
+      run: |
+        python -m flake8
+    - name: Build
+      run: |
+        python setup.py build_ext -i
+    - name: Test suite run
+      run: |
+        python -m unittest patiencediff.test_patiencediff
+      env:
+        PYTHONHASHSEED: random
