@@ -113,7 +113,7 @@ def unified_diff_files(a, b, sequencematcher=None):
     else:
         with open(a, 'r') as f:
             lines_a = f.readlines()
-        time_a = os.stat(a).st_mtime
+        time_a = os.stat(a).st_mtime  # noqa: F841
 
     if b == '-':
         lines_b = sys.stdin.readlines()
@@ -121,7 +121,7 @@ def unified_diff_files(a, b, sequencematcher=None):
     else:
         with open(b, 'r') as f:
             lines_b = f.readlines()
-        time_b = os.stat(b).st_mtime
+        time_b = os.stat(b).st_mtime  # noqa: F841
 
     # TODO: Include fromfiledate and tofiledate
     return unified_diff(lines_a, lines_b,
@@ -136,7 +136,7 @@ try:
         PatienceSequenceMatcher_c as PatienceSequenceMatcher
         )
 except ImportError:
-    from ._patiencediff_py import (
+    from ._patiencediff_py import (  # noqa: F401
         unique_lcs_py as unique_lcs,
         recurse_matches_py as recurse_matches,
         PatienceSequenceMatcher_py as PatienceSequenceMatcher
@@ -147,12 +147,16 @@ def main(args):
     import optparse
     p = optparse.OptionParser(usage='%prog [options] file_a file_b'
                                     '\nFiles can be "-" to read from stdin')
-    p.add_option('--patience', dest='matcher', action='store_const', const='patience',
-                 default='patience', help='Use the patience difference algorithm')
-    p.add_option('--difflib', dest='matcher', action='store_const', const='difflib',
+    p.add_option('--patience', dest='matcher', action='store_const',
+                 const='patience', default='patience',
+                 help='Use the patience difference algorithm')
+    p.add_option('--difflib', dest='matcher', action='store_const',
+                 const='difflib',
                  default='patience', help='Use python\'s difflib algorithm')
 
-    algorithms = {'patience':PatienceSequenceMatcher, 'difflib':difflib.SequenceMatcher}
+    algorithms = {
+        'patience': PatienceSequenceMatcher,
+        'difflib': difflib.SequenceMatcher}
 
     (opts, args) = p.parse_args(args)
     matcher = algorithms[opts.matcher]
