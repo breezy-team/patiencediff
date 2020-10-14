@@ -24,7 +24,7 @@ import difflib
 
 __all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
 
-__version__ = (0, 2, 0)
+__version__ = (0, 2, 1)
 
 
 # This is a version of unified_diff which only adds a factory parameter
