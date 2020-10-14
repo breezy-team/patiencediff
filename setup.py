@@ -32,7 +32,7 @@ class Distribution(core.Distribution):
 setup(name="patiencediff",
       description="Python implementation of the patiencediff algorithm.",
       long_description=long_description,
-      version="0.2.0",
+      version="0.2.1",
       maintainer="Breezy Developers",
       maintainer_email="team@breezy-vcs.org",
       license="GNU GPLv2 or later",
