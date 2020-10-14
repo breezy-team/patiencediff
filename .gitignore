@@ -1,0 +1,7 @@
+dist
+build
+__pycache__
+*~
+*.so
+*.pyc
+patiencediff.egg-info
