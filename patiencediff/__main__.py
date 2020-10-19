@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2005, 2006, 2007 Canonical Ltd
 #
 # This program is free software; you can redistribute it and/or modify
@@ -49,5 +48,4 @@ def main(args):
         sys.stdout.write(line)
 
 
-if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+sys.exit(main(sys.argv[1:]))
