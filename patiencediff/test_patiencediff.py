@@ -24,10 +24,6 @@ import unittest
 from . import _patiencediff_py
 
 
-if sys.version_info[0] == 3:
-    unichr = chr
-
-
 class TestPatienceDiffLib(unittest.TestCase):
 
     def setUp(self):
@@ -38,8 +34,8 @@ class TestPatienceDiffLib(unittest.TestCase):
             _patiencediff_py.PatienceSequenceMatcher_py
 
     def test_diff_unicode_string(self):
-        a = ''.join([unichr(i) for i in range(4000, 4500, 3)])
-        b = ''.join([unichr(i) for i in range(4300, 4800, 2)])
+        a = ''.join([chr(i) for i in range(4000, 4500, 3)])
+        b = ''.join([chr(i) for i in range(4300, 4800, 2)])
         sm = self._PatienceSequenceMatcher(None, a, b)
         mb = sm.get_matching_blocks()
         self.assertEqual(35, len(mb))
