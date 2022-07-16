@@ -17,7 +17,6 @@
 import os
 import patiencediff
 import shutil
-import sys
 import tempfile
 import unittest
 
