@@ -14,12 +14,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from __future__ import absolute_import
-
 import os
 import sys
 import time
 import difflib
+
+from typing import Type
 
 
 __all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
@@ -126,6 +126,9 @@ def unified_diff_files(a, b, sequencematcher=None):
     return unified_diff(lines_a, lines_b,
                         fromfile=a, tofile=b,
                         sequencematcher=sequencematcher)
+
+
+PatienceSequenceMatcher: Type[difflib.SequenceMatcher]
 
 
 try:
