@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from __future__ import absolute_import
+from typing import List, Tuple, Sequence, Dict, Any, Optional
 
 from bisect import bisect
 import difflib
@@ -26,7 +26,7 @@ class MaxRecursionDepth(Exception):
         super(MaxRecursionDepth, self).__init__('max recursion depth reached')
 
 
-def unique_lcs_py(a, b):
+def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
     """Find the longest common subset for unique lines.
 
     :param a: An indexable object (such as string or list of strings)
@@ -40,9 +40,10 @@ def unique_lcs_py(a, b):
     The longest common subset uses the Patience Sorting algorithm:
     http://en.wikipedia.org/wiki/Patience_sorting
     """
+    line: Any
     # set index[line in a] = position of line in a unless
     # a is a duplicate, in which case it's set to None
-    index = {}
+    index: Dict[Any, Optional[int]] = {}
     for i, line in enumerate(a):
         if line in index:
             index[line] = None
@@ -51,8 +52,8 @@ def unique_lcs_py(a, b):
     # make btoa[i] = position of line i in a, unless
     # that line doesn't occur exactly once in both,
     # in which case it's set to None
-    btoa = [None] * len(b)
-    index2 = {}
+    btoa: List[Optional[int]] = [None] * len(b)
+    index2: Dict[Any, int] = {}
     for pos, line in enumerate(b):
         next = index.get(line)
         if next is not None:
@@ -66,10 +67,10 @@ def unique_lcs_py(a, b):
                 btoa[pos] = next
     # this is the Patience sorting algorithm
     # see http://en.wikipedia.org/wiki/Patience_sorting
-    backpointers = [None] * len(b)
-    stacks = []
-    lasts = []
-    k = 0
+    backpointers: List[Optional[int]] = [None] * len(b)
+    stacks: List[int] = []
+    lasts: List[int] = []
+    k: int = 0
     for bpos, apos in enumerate(btoa):
         if apos is None:
             continue
@@ -95,15 +96,18 @@ def unique_lcs_py(a, b):
     if len(lasts) == 0:
         return []
     result = []
-    k = lasts[-1]
-    while k is not None:
-        result.append((btoa[k], k))
-        k = backpointers[k]
+    m: Optional[int] = lasts[-1]
+    while m is not None:
+        result.append((btoa[m], m))
+        m = backpointers[m]
     result.reverse()
-    return result
+    return result  # type: ignore
 
 
-def recurse_matches_py(a, b, alo, blo, ahi, bhi, answer, maxrecursion):
+def recurse_matches_py(
+        a: Sequence[Any], b: Sequence[Any],
+        alo: int, blo: int, ahi: int, bhi: int,
+        answer: List[Tuple[int, int]], maxrecursion: int) -> None:
     """Find all of the matching text in the lines of a and b.
 
     :param a: A sequence
