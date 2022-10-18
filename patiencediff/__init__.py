@@ -24,7 +24,7 @@ from typing import Type
 
 __all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
 
-__version__ = (0, 2, 3)
+__version__ = (0, 2, 4)
 
 
 # This is a version of unified_diff which only adds a factory parameter
