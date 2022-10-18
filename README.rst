@@ -1,3 +1,6 @@
+patiencediff
+############
+
 This package contains the implementation of the ``patiencediff`` algorithm, as
 `first described <https://bramcohen.livejournal.com/73318.html>`_ by Bram Cohen.
 
@@ -32,8 +35,8 @@ Or from Python:
      >>> print ''.join(patiencediff.unified_diff(
      ...      ['a\n', 'b\n', 'b\n', 'c\n'],
      ...      ['a\n', 'c\n', 'b\n']))
-     --- 
-     +++ 
+     ---
+     +++
      @@ -1,4 +1,3 @@
       a
      +c
