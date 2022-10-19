@@ -20,7 +20,7 @@ import difflib
 from . import PatienceSequenceMatcher, unified_diff_files
 
 
-def main(args):
+def main(argv=None):
     import optparse
     p = optparse.OptionParser(usage='%prog [options] file_a file_b'
                                     '\nFiles can be "-" to read from stdin')
@@ -35,7 +35,7 @@ def main(args):
         'patience': PatienceSequenceMatcher,
         'difflib': difflib.SequenceMatcher}
 
-    (opts, args) = p.parse_args(args)
+    (opts, args) = p.parse_args(argv)
     matcher = algorithms[opts.matcher]
 
     if len(args) != 2:
