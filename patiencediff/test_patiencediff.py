@@ -15,10 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
-import patiencediff
 import shutil
 import tempfile
 import unittest
+
+import patiencediff
 
 from . import _patiencediff_py
 
