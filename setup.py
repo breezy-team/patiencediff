@@ -2,8 +2,8 @@
 # encoding: utf-8
 
 import os
-from setuptools import setup, Extension
 
+from setuptools import Extension, setup
 
 ext_modules = [
     Extension(
