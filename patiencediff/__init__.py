@@ -14,13 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import difflib
 import os
 import sys
 import time
-import difflib
-
 from typing import Type
-
 
 __all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
 
@@ -132,14 +130,13 @@ PatienceSequenceMatcher: Type[difflib.SequenceMatcher]
 
 
 try:
-    from ._patiencediff_c import (
-        unique_lcs_c as unique_lcs,
-        recurse_matches_c as recurse_matches,
+    from ._patiencediff_c import \
         PatienceSequenceMatcher_c as PatienceSequenceMatcher
-        )
+    from ._patiencediff_c import recurse_matches_c as recurse_matches
+    from ._patiencediff_c import unique_lcs_c as unique_lcs
 except ImportError:
-    from ._patiencediff_py import (  # noqa: F401
-        unique_lcs_py as unique_lcs,
-        recurse_matches_py as recurse_matches,
-        PatienceSequenceMatcher_py as PatienceSequenceMatcher
-        )
+    from ._patiencediff_py import \
+        PatienceSequenceMatcher_py as PatienceSequenceMatcher  # noqa: F401
+    from ._patiencediff_py import \
+        recurse_matches_py as recurse_matches  # noqa: F401
+    from ._patiencediff_py import unique_lcs_py as unique_lcs  # noqa: F401

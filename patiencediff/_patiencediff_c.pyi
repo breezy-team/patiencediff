@@ -1,6 +1,5 @@
 import difflib
-from typing import List, Tuple, Sequence, Any
-
+from typing import Any, List, Sequence, Tuple
 
 class PatienceSequenceMatcher_c(difflib.SequenceMatcher):
 
