@@ -14,10 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from typing import List, Tuple, Sequence, Dict, Any, Optional
-
-from bisect import bisect
 import difflib
+from bisect import bisect
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 
 class MaxRecursionDepth(Exception):
