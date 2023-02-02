@@ -27,7 +27,7 @@ from . import _patiencediff_py
 class TestPatienceDiffLib(unittest.TestCase):
 
     def setUp(self):
-        super(TestPatienceDiffLib, self).setUp()
+        super().setUp()
         self._unique_lcs = _patiencediff_py.unique_lcs_py
         self._recurse_matches = _patiencediff_py.recurse_matches_py
         self._PatienceSequenceMatcher = \
@@ -411,7 +411,7 @@ pynff pzq_zxqve(Pbzznaq):
 class TestPatienceDiffLib_c(TestPatienceDiffLib):
 
     def setUp(self):
-        super(TestPatienceDiffLib_c, self).setUp()
+        super().setUp()
         try:
             from . import _patiencediff_c
         except ImportError:
@@ -440,7 +440,7 @@ class TestPatienceDiffLib_c(TestPatienceDiffLib):
 class TestPatienceDiffLibFiles(unittest.TestCase):
 
     def setUp(self):
-        super(TestPatienceDiffLibFiles, self).setUp()
+        super().setUp()
         self._PatienceSequenceMatcher = \
             _patiencediff_py.PatienceSequenceMatcher_py
         self.test_dir = tempfile.mkdtemp()
@@ -523,7 +523,7 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
 class TestPatienceDiffLibFiles_c(TestPatienceDiffLibFiles):
 
     def setUp(self):
-        super(TestPatienceDiffLibFiles_c, self).setUp()
+        super().setUp()
         try:
             from . import _patiencediff_c
         except ImportError:
