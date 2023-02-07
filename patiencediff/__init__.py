@@ -22,7 +22,7 @@ from typing import Type
 
 __all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
 
-__version__ = (0, 2, 12)
+__version__ = (0, 2, 13)
 
 
 # This is a version of unified_diff which only adds a factory parameter
