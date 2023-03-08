@@ -1,3 +1,41 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "patiencediff"
+description = "Python implementation of the patiencediff algorithm"
+readme = "README.rst"
+maintainers = [{name = "Breezy Developers", email = "team@breezy-vcs.org"}]
+license = {text = "GNU GPLv2 or later"}
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Operating System :: POSIX",
+]
+requires-python = ">=3.7"
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://www.breezy-vcs.org/"
+Repository = "https://github.com/breezy-team/patiencediff"
+
+[project.scripts]
+patiencediff = "patiencediff.__main__:main"
+
+[tool.setuptools]
+packages = ["patiencediff"]
+include-package-data = false
+
+[tool.setuptools.package-data]
+patiencediff = ["py.typed"]
+
+[tool.setuptools.dynamic]
+version = {attr = "patiencediff.__version__"}
