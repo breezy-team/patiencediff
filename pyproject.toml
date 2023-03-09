@@ -22,6 +22,7 @@ classifiers = [
 ]
 requires-python = ">=3.7"
 dynamic = ["version"]
+dependencies = []
 
 [project.urls]
 Homepage = "https://www.breezy-vcs.org/"
