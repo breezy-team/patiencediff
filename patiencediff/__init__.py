@@ -20,7 +20,13 @@ import sys
 import time
 from typing import Type
 
-__all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
+__all__ = [
+    'PatienceSequenceMatcher',
+    'unified_diff',
+    'unified_diff_files',
+    'recurse_matches',
+    'unique_lcs',
+]
 
 __version__ = (0, 2, 13)
 
@@ -134,9 +140,9 @@ try:
     from ._patiencediff_c import unique_lcs_c as unique_lcs
 except ImportError:
     from ._patiencediff_py import (
-        PatienceSequenceMatcher_py as PatienceSequenceMatcher,  # noqa: F401
+        PatienceSequenceMatcher_py as PatienceSequenceMatcher,
     )
     from ._patiencediff_py import (
-        recurse_matches_py as recurse_matches,  # noqa: F401
+        recurse_matches_py as recurse_matches,
     )
-    from ._patiencediff_py import unique_lcs_py as unique_lcs  # noqa: F401
+    from ._patiencediff_py import unique_lcs_py as unique_lcs
