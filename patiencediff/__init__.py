@@ -20,7 +20,13 @@ import sys
 import time
 from typing import Type
 
-__all__ = ['PatienceSequenceMatcher', 'unified_diff', 'unified_diff_files']
+__all__ = [
+    'PatienceSequenceMatcher',
+    'unified_diff',
+    'unified_diff_files',
+    'recurse_matches',
+    'unique_lcs',
+]
 
 __version__ = (0, 2, 13)
 
@@ -31,8 +37,7 @@ __version__ = (0, 2, 13)
 def unified_diff(a, b, fromfile='', tofile='', fromfiledate='',
                  tofiledate='', n=3, lineterm='\n',
                  sequencematcher=None):
-    r"""
-    Compare two sequences of lines; generate the delta as a unified diff.
+    r"""Compare two sequences of lines; generate the delta as a unified diff.
 
     Unified diffs are a compact way of showing line changes and a few
     lines of context.  The number of context lines is set by 'n' which
@@ -53,7 +58,6 @@ def unified_diff(a, b, fromfile='', tofile='', fromfiledate='',
     times are normally expressed in the format returned by time.ctime().
 
     Example:
-
     >>> for line in unified_diff('one two three four'.split(),
     ...             'zero one tree four'.split(), 'Original', 'Current',
     ...             'Sat Jan 26 23:30:50 1991', 'Fri Jun 06 10:20:52 2003',
@@ -80,8 +84,8 @@ def unified_diff(a, b, fromfile='', tofile='', fromfiledate='',
     started = False
     for group in sequencematcher(None, a, b).get_grouped_opcodes(n):
         if not started:
-            yield '--- %s%s%s' % (fromfile, fromfiledate, lineterm)
-            yield '+++ %s%s%s' % (tofile, tofiledate, lineterm)
+            yield f'--- {fromfile}{fromfiledate}{lineterm}'
+            yield f'+++ {tofile}{tofiledate}{lineterm}'
             started = True
         i1, i2, j1, j2 = group[0][1], group[-1][2], group[0][3], group[-1][4]
         yield "@@ -%d,%d +%d,%d @@%s" % (i1+1, i2-i1, j1+1, j2-j1, lineterm)
@@ -99,8 +103,7 @@ def unified_diff(a, b, fromfile='', tofile='', fromfiledate='',
 
 
 def unified_diff_files(a, b, sequencematcher=None):
-    """Generate the diff for two files.
-    """
+    """Generate the diff for two files."""
     # Should this actually be an error?
     if a == b:
         return []
@@ -108,7 +111,7 @@ def unified_diff_files(a, b, sequencematcher=None):
         lines_a = sys.stdin.readlines()
         time_a = time.time()
     else:
-        with open(a, 'r') as f:
+        with open(a) as f:
             lines_a = f.readlines()
         time_a = os.stat(a).st_mtime  # noqa: F841
 
@@ -116,7 +119,7 @@ def unified_diff_files(a, b, sequencematcher=None):
         lines_b = sys.stdin.readlines()
         time_b = time.time()
     else:
-        with open(b, 'r') as f:
+        with open(b) as f:
             lines_b = f.readlines()
         time_b = os.stat(b).st_mtime  # noqa: F841
 
@@ -130,13 +133,16 @@ PatienceSequenceMatcher: Type[difflib.SequenceMatcher]
 
 
 try:
-    from ._patiencediff_c import \
-        PatienceSequenceMatcher_c as PatienceSequenceMatcher
+    from ._patiencediff_c import (
+        PatienceSequenceMatcher_c as PatienceSequenceMatcher,
+    )
     from ._patiencediff_c import recurse_matches_c as recurse_matches
     from ._patiencediff_c import unique_lcs_c as unique_lcs
 except ImportError:
-    from ._patiencediff_py import \
-        PatienceSequenceMatcher_py as PatienceSequenceMatcher  # noqa: F401
-    from ._patiencediff_py import \
-        recurse_matches_py as recurse_matches  # noqa: F401
-    from ._patiencediff_py import unique_lcs_py as unique_lcs  # noqa: F401
+    from ._patiencediff_py import (
+        PatienceSequenceMatcher_py as PatienceSequenceMatcher,
+    )
+    from ._patiencediff_py import (
+        recurse_matches_py as recurse_matches,
+    )
+    from ._patiencediff_py import unique_lcs_py as unique_lcs
