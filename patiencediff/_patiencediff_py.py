@@ -21,8 +21,8 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 class MaxRecursionDepth(Exception):
 
-    def __init__(self):
-        super(MaxRecursionDepth, self).__init__('max recursion depth reached')
+    def __init__(self) -> None:
+        super().__init__('max recursion depth reached')
 
 
 def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
@@ -213,7 +213,7 @@ class PatienceSequenceMatcher_py(difflib.SequenceMatcher):
 
     _do_check_consistency = True
 
-    def __init__(self, isjunk=None, a='', b=''):
+    def __init__(self, isjunk=None, a='', b='') -> None:
         if isjunk is not None:
             raise NotImplementedError('Currently we do not support'
                                       ' isjunk for sequence matching')
