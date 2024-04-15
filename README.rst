@@ -29,17 +29,17 @@ To invoke patiencediff from the command-line::
 
     python -m patiencediff file_a file_b
 
-Or from Python:
+Or from Python::
 
-     >>> import patiencediff
-     >>> print ''.join(patiencediff.unified_diff(
-     ...      ['a\n', 'b\n', 'b\n', 'c\n'],
-     ...      ['a\n', 'c\n', 'b\n']))
-     ---
-     +++
-     @@ -1,4 +1,3 @@
-      a
-     +c
-      b
-     -b
-     -c
+    >>> import patiencediff
+    >>> print(''.join(patiencediff.unified_diff(
+    ...      ['a\n', 'b\n', 'b\n', 'c\n'],
+    ...      ['a\n', 'c\n', 'b\n'])))
+    ---
+    +++
+    @@ -1,4 +1,3 @@
+     a
+    +c
+     b
+    -b
+    -c
