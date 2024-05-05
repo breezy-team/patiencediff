@@ -67,3 +67,8 @@ line-length = 79
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.4.3"
+]
