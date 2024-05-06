@@ -28,7 +28,7 @@ __all__ = [
     'unique_lcs',
 ]
 
-__version__ = (0, 2, 14)
+__version__ = (0, 2, 15)
 
 
 # This is a version of unified_diff which only adds a factory parameter
