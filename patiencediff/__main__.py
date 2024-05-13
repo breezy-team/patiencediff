@@ -22,24 +22,38 @@ from . import PatienceSequenceMatcher, unified_diff_files
 
 def main(argv=None):
     import optparse
-    p = optparse.OptionParser(usage='%prog [options] file_a file_b'
-                                    '\nFiles can be "-" to read from stdin')
-    p.add_option('--patience', dest='matcher', action='store_const',
-                 const='patience', default='patience',
-                 help='Use the patience difference algorithm')
-    p.add_option('--difflib', dest='matcher', action='store_const',
-                 const='difflib',
-                 default='patience', help='Use python\'s difflib algorithm')
+
+    p = optparse.OptionParser(
+        usage="%prog [options] file_a file_b"
+        '\nFiles can be "-" to read from stdin'
+    )
+    p.add_option(
+        "--patience",
+        dest="matcher",
+        action="store_const",
+        const="patience",
+        default="patience",
+        help="Use the patience difference algorithm",
+    )
+    p.add_option(
+        "--difflib",
+        dest="matcher",
+        action="store_const",
+        const="difflib",
+        default="patience",
+        help="Use python's difflib algorithm",
+    )
 
     algorithms = {
-        'patience': PatienceSequenceMatcher,
-        'difflib': difflib.SequenceMatcher}
+        "patience": PatienceSequenceMatcher,
+        "difflib": difflib.SequenceMatcher,
+    }
 
     (opts, args) = p.parse_args(argv)
     matcher = algorithms[opts.matcher]
 
     if len(args) != 2:
-        print('You must supply 2 filenames to diff')
+        print("You must supply 2 filenames to diff")
         return -1
 
     for line in unified_diff_files(args[0], args[1], sequencematcher=matcher):

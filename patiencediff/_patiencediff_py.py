@@ -20,9 +20,8 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 
 class MaxRecursionDepth(Exception):
-
     def __init__(self) -> None:
-        super().__init__('max recursion depth reached')
+        super().__init__("max recursion depth reached")
 
 
 def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
@@ -79,13 +78,16 @@ def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
             k = len(stacks)
         # as an optimization, check if the next line comes right after
         # the previous line, because usually it does
-        elif stacks and stacks[k] < apos and (k == len(stacks) - 1 or
-                                              stacks[k+1] > apos):
+        elif (
+            stacks
+            and stacks[k] < apos
+            and (k == len(stacks) - 1 or stacks[k + 1] > apos)
+        ):
             k += 1
         else:
             k = bisect(stacks, apos)
         if k > 0:
-            backpointers[bpos] = lasts[k-1]
+            backpointers[bpos] = lasts[k - 1]
         if k < len(stacks):
             stacks[k] = apos
             lasts[k] = bpos
@@ -104,9 +106,15 @@ def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
 
 
 def recurse_matches_py(
-        a: Sequence[Any], b: Sequence[Any],
-        alo: int, blo: int, ahi: int, bhi: int,
-        answer: List[Tuple[int, int]], maxrecursion: int) -> None:
+    a: Sequence[Any],
+    b: Sequence[Any],
+    alo: int,
+    blo: int,
+    ahi: int,
+    bhi: int,
+    answer: List[Tuple[int, int]],
+    maxrecursion: int,
+) -> None:
     """Find all of the matching text in the lines of a and b.
 
     :param a: A sequence
@@ -129,32 +137,46 @@ def recurse_matches_py(
     oldlength = len(answer)
     if alo == ahi or blo == bhi:
         return
-    last_a_pos = alo-1
-    last_b_pos = blo-1
+    last_a_pos = alo - 1
+    last_b_pos = blo - 1
     for apos, bpos in unique_lcs_py(a[alo:ahi], b[blo:bhi]):
         # recurse between lines which are unique in each file and match
         apos += alo
         bpos += blo
         # Most of the time, you will have a sequence of similar entries
-        if last_a_pos+1 != apos or last_b_pos+1 != bpos:
+        if last_a_pos + 1 != apos or last_b_pos + 1 != bpos:
             recurse_matches_py(
-                a, b, last_a_pos+1, last_b_pos+1,
-                apos, bpos, answer, maxrecursion - 1)
+                a,
+                b,
+                last_a_pos + 1,
+                last_b_pos + 1,
+                apos,
+                bpos,
+                answer,
+                maxrecursion - 1,
+            )
         last_a_pos = apos
         last_b_pos = bpos
         answer.append((apos, bpos))
     if len(answer) > oldlength:
         # find matches between the last match and the end
-        recurse_matches_py(a, b, last_a_pos+1, last_b_pos+1,
-                           ahi, bhi, answer, maxrecursion - 1)
+        recurse_matches_py(
+            a,
+            b,
+            last_a_pos + 1,
+            last_b_pos + 1,
+            ahi,
+            bhi,
+            answer,
+            maxrecursion - 1,
+        )
     elif a[alo] == b[blo]:
         # find matching lines at the very beginning
         while alo < ahi and blo < bhi and a[alo] == b[blo]:
             answer.append((alo, blo))
             alo += 1
             blo += 1
-        recurse_matches_py(a, b, alo, blo,
-                           ahi, bhi, answer, maxrecursion - 1)
+        recurse_matches_py(a, b, alo, blo, ahi, bhi, answer, maxrecursion - 1)
     elif a[ahi - 1] == b[bhi - 1]:
         # find matching lines at the very end
         nahi = ahi - 1
@@ -162,8 +184,16 @@ def recurse_matches_py(
         while nahi > alo and nbhi > blo and a[nahi - 1] == b[nbhi - 1]:
             nahi -= 1
             nbhi -= 1
-        recurse_matches_py(a, b, last_a_pos+1, last_b_pos+1,
-                           nahi, nbhi, answer, maxrecursion - 1)
+        recurse_matches_py(
+            a,
+            b,
+            last_a_pos + 1,
+            last_b_pos + 1,
+            nahi,
+            nbhi,
+            answer,
+            maxrecursion - 1,
+        )
         for i in range(ahi - nahi):
             answer.append((nahi + i, nbhi + i))
 
@@ -178,9 +208,11 @@ def _collapse_sequences(matches):
     start_a = start_b = None
     length = 0
     for i_a, i_b in matches:
-        if (start_a is not None
-                and (i_a == start_a + length)
-                and (i_b == start_b + length)):
+        if (
+            start_a is not None
+            and (i_a == start_a + length)
+            and (i_b == start_b + length)
+        ):
             length += 1
         else:
             if start_a is not None:
@@ -199,11 +231,11 @@ def _check_consistency(answer):
     # For consistency sake, make sure all matches are only increasing
     next_a = -1
     next_b = -1
-    for (a, b, match_len) in answer:
+    for a, b, match_len in answer:
         if a < next_a:
-            raise ValueError('Non increasing matches for a')
+            raise ValueError("Non increasing matches for a")
         if b < next_b:
-            raise ValueError('Non increasing matches for b')
+            raise ValueError("Non increasing matches for b")
         next_a = a + match_len
         next_b = b + match_len
 
@@ -213,10 +245,11 @@ class PatienceSequenceMatcher_py(difflib.SequenceMatcher):
 
     _do_check_consistency = True
 
-    def __init__(self, isjunk=None, a='', b='') -> None:
+    def __init__(self, isjunk=None, a="", b="") -> None:
         if isjunk is not None:
-            raise NotImplementedError('Currently we do not support'
-                                      ' isjunk for sequence matching')
+            raise NotImplementedError(
+                "Currently we do not support" " isjunk for sequence matching"
+            )
         difflib.SequenceMatcher.__init__(self, isjunk, a, b)
 
     def get_matching_blocks(self):
@@ -242,8 +275,9 @@ class PatienceSequenceMatcher_py(difflib.SequenceMatcher):
             return self.matching_blocks
 
         matches = []
-        recurse_matches_py(self.a, self.b, 0, 0,
-                           len(self.a), len(self.b), matches, 10)
+        recurse_matches_py(
+            self.a, self.b, 0, 0, len(self.a), len(self.b), matches, 10
+        )
         # Matches now has individual line pairs of
         # line A matches line B, at the given offsets
         self.matching_blocks = _collapse_sequences(matches)

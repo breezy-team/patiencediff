@@ -23,7 +23,9 @@ jobs:
         python -m pip install --upgrade pip mypy "cython>=0.29" setuptools
         pip install -U pip ".[dev]"
     - name: Style checks
-      run: python -m ruff check .
+      run: |
+        python -m ruff check .
+        python -m ruff format --check .
     - name: Typing checks
       run: python -m mypy patiencediff
     - name: Build
