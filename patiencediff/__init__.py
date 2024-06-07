@@ -21,11 +21,11 @@ import time
 from typing import Type
 
 __all__ = [
-    'PatienceSequenceMatcher',
-    'unified_diff',
-    'unified_diff_files',
-    'recurse_matches',
-    'unique_lcs',
+    "PatienceSequenceMatcher",
+    "unified_diff",
+    "unified_diff_files",
+    "recurse_matches",
+    "unique_lcs",
 ]
 
 __version__ = (0, 2, 15)
@@ -34,9 +34,17 @@ __version__ = (0, 2, 15)
 # This is a version of unified_diff which only adds a factory parameter
 # so that you can override the default SequenceMatcher
 # this has been submitted as a patch to python
-def unified_diff(a, b, fromfile='', tofile='', fromfiledate='',
-                 tofiledate='', n=3, lineterm='\n',
-                 sequencematcher=None):
+def unified_diff(
+    a,
+    b,
+    fromfile="",
+    tofile="",
+    fromfiledate="",
+    tofiledate="",
+    n=3,
+    lineterm="\n",
+    sequencematcher=None,
+):
     r"""Compare two sequences of lines; generate the delta as a unified diff.
 
     Unified diffs are a compact way of showing line changes and a few
@@ -77,29 +85,35 @@ def unified_diff(a, b, fromfile='', tofile='', fromfiledate='',
         sequencematcher = difflib.SequenceMatcher
 
     if fromfiledate:
-        fromfiledate = '\t' + str(fromfiledate)
+        fromfiledate = "\t" + str(fromfiledate)
     if tofiledate:
-        tofiledate = '\t' + str(tofiledate)
+        tofiledate = "\t" + str(tofiledate)
 
     started = False
     for group in sequencematcher(None, a, b).get_grouped_opcodes(n):
         if not started:
-            yield f'--- {fromfile}{fromfiledate}{lineterm}'
-            yield f'+++ {tofile}{tofiledate}{lineterm}'
+            yield f"--- {fromfile}{fromfiledate}{lineterm}"
+            yield f"+++ {tofile}{tofiledate}{lineterm}"
             started = True
         i1, i2, j1, j2 = group[0][1], group[-1][2], group[0][3], group[-1][4]
-        yield "@@ -%d,%d +%d,%d @@%s" % (i1+1, i2-i1, j1+1, j2-j1, lineterm)
+        yield "@@ -%d,%d +%d,%d @@%s" % (
+            i1 + 1,
+            i2 - i1,
+            j1 + 1,
+            j2 - j1,
+            lineterm,
+        )
         for tag, i1, i2, j1, j2 in group:
-            if tag == 'equal':
+            if tag == "equal":
                 for line in a[i1:i2]:
-                    yield ' ' + line
+                    yield " " + line
                 continue
-            if tag == 'replace' or tag == 'delete':
+            if tag == "replace" or tag == "delete":
                 for line in a[i1:i2]:
-                    yield '-' + line
-            if tag == 'replace' or tag == 'insert':
+                    yield "-" + line
+            if tag == "replace" or tag == "insert":
                 for line in b[j1:j2]:
-                    yield '+' + line
+                    yield "+" + line
 
 
 def unified_diff_files(a, b, sequencematcher=None):
@@ -107,7 +121,7 @@ def unified_diff_files(a, b, sequencematcher=None):
     # Should this actually be an error?
     if a == b:
         return []
-    if a == '-':
+    if a == "-":
         lines_a = sys.stdin.readlines()
         time_a = time.time()
     else:
@@ -115,7 +129,7 @@ def unified_diff_files(a, b, sequencematcher=None):
             lines_a = f.readlines()
         time_a = os.stat(a).st_mtime  # noqa: F841
 
-    if b == '-':
+    if b == "-":
         lines_b = sys.stdin.readlines()
         time_b = time.time()
     else:
@@ -124,9 +138,9 @@ def unified_diff_files(a, b, sequencematcher=None):
         time_b = os.stat(b).st_mtime  # noqa: F841
 
     # TODO: Include fromfiledate and tofiledate
-    return unified_diff(lines_a, lines_b,
-                        fromfile=a, tofile=b,
-                        sequencematcher=sequencematcher)
+    return unified_diff(
+        lines_a, lines_b, fromfile=a, tofile=b, sequencematcher=sequencematcher
+    )
 
 
 PatienceSequenceMatcher: Type[difflib.SequenceMatcher]
