@@ -41,7 +41,7 @@ patiencediff = ["py.typed"]
 [tool.setuptools.dynamic]
 version = {attr = "patiencediff.__version__"}
 
-[tool.ruff]
+[tool.ruff.lint]
 select = [
     "ANN",
     "D",
@@ -62,10 +62,12 @@ ignore = [
     "D104",
     "E501",
 ]
-target-version = "py37"
+
+[tool.ruff]
+target-version = "py38"
 line-length = 79
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [project.optional-dependencies]
