@@ -27,9 +27,9 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
       - name: Upload wheels
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
-          name: artifact-{{ matrix.os }}
+          name: artifact-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
   build-sdist:
