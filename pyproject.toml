@@ -72,5 +72,5 @@ convention = "google"
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.7.1"
+    "ruff==0.7.2"
 ]
