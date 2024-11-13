@@ -1,0 +1,10 @@
+name = "patiencediff"
+tag-name = "v$VERSION"
+verify-command = "python3 -m unittest patiencediff.test_patiencediff"
+tarball-location = []
+release-timeout = 5
+
+[[update_version]]
+path = "patiencediff/__init__.py"
+match = "^__version__ = ((.*))$"
+new-line = "__version__ = $TUPLED_VERSION"
