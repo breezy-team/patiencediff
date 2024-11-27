@@ -52,7 +52,6 @@ select = [
 ]
 ignore = [
     "ANN001",
-    "ANN101",
     "ANN201",
     "ANN202",
     "D100",
@@ -72,5 +71,5 @@ convention = "google"
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.7.3"
+    "ruff==0.8.0"
 ]
