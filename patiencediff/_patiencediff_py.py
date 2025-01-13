@@ -248,7 +248,7 @@ class PatienceSequenceMatcher_py(difflib.SequenceMatcher):
     def __init__(self, isjunk=None, a="", b="") -> None:
         if isjunk is not None:
             raise NotImplementedError(
-                "Currently we do not support" " isjunk for sequence matching"
+                "Currently we do not support isjunk for sequence matching"
             )
         difflib.SequenceMatcher.__init__(self, isjunk, a, b)
 
