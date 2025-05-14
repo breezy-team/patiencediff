@@ -141,13 +141,15 @@ def unified_diff_files(a, b, sequencematcher=None):
 PatienceSequenceMatcher: Type[difflib.SequenceMatcher]
 
 
+# Try to import the Rust implementation first
 try:
-    from ._patiencediff_c import (
-        PatienceSequenceMatcher_c as PatienceSequenceMatcher,
+    from ._patiencediff_rs import (
+        PatienceSequenceMatcher_rs as PatienceSequenceMatcher,
     )
-    from ._patiencediff_c import recurse_matches_c as recurse_matches
-    from ._patiencediff_c import unique_lcs_c as unique_lcs
+    from ._patiencediff_rs import recurse_matches_rs as recurse_matches
+    from ._patiencediff_rs import unique_lcs_rs as unique_lcs
 except ImportError:
+    # Fall back to the Python implementation if Rust is not available
     from ._patiencediff_py import (
         PatienceSequenceMatcher_py as PatienceSequenceMatcher,
     )
