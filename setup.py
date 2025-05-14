@@ -2,15 +2,19 @@
 
 import os
 
-from setuptools import Extension, setup
+from setuptools import setup
+from setuptools_rust import Binding, RustExtension
 
-ext_modules = [
-    Extension(
-        "patiencediff._patiencediff_c",
-        ["patiencediff/_patiencediff_c.c"],
+# Rust extension
+rust_extensions = [
+    RustExtension(
+        "patiencediff._patiencediff_rs",
+        "Cargo.toml",
+        binding=Binding.PyO3,
         optional=os.environ.get("CIBUILDWHEEL", "0") != "1",
     )
 ]
 
-
-setup(ext_modules=ext_modules)
+setup(
+    rust_extensions=rust_extensions,
+)
