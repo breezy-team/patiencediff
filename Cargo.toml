@@ -1,0 +1,16 @@
+[package]
+name = "patiencediff-rs"
+version = "0.2.15"
+edition = "2021"
+authors = ["Breezy Developers <team@breezy-vcs.org>"]
+description = "Python bindings for patiencediff algorithm"
+license = "GPL-2.0-or-later"
+repository = "https://github.com/breezy-team/patiencediff"
+
+[lib]
+name = "_patiencediff_rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+patiencediff = { version = "0.2.1", default-features = false }
+pyo3 = { version = "0.24.0", features = ["extension-module"] }
