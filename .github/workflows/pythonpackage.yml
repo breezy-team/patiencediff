@@ -25,7 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip mypy "cython>=0.29" setuptools
+        python -m pip install --upgrade pip mypy setuptools setuptools-rust
         pip install -U pip ".[dev]"
     - name: Style checks
       run: |
