@@ -518,39 +518,6 @@ pynff pzq_zxqve(Pbzznaq):
         )
 
 
-class TestPatienceDiffLib_c(TestPatienceDiffLib):
-    def setUp(self):
-        super().setUp()
-        try:
-            from . import _patiencediff_c
-        except ImportError:
-            self.skipTest("C extension not built")
-        self._unique_lcs = _patiencediff_c.unique_lcs_c
-        self._recurse_matches = _patiencediff_c.recurse_matches_c
-        self._PatienceSequenceMatcher = (
-            _patiencediff_c.PatienceSequenceMatcher_c
-        )
-
-    def test_unhashable(self):
-        """We should get a proper exception here."""
-        # We need to be able to hash items in the sequence, lists are
-        # unhashable, and thus cannot be diffed
-        self.assertRaises(
-            TypeError, self._PatienceSequenceMatcher, None, [[]], []
-        )
-        self.assertRaises(
-            TypeError, self._PatienceSequenceMatcher, None, ["valid", []], []
-        )
-        self.assertRaises(
-            TypeError, self._PatienceSequenceMatcher, None, ["valid"], [[]]
-        )
-        self.assertRaises(
-            TypeError,
-            self._PatienceSequenceMatcher,
-            None,
-            ["valid"],
-            ["valid", []],
-        )
 
 
 class TestPatienceDiffLibFiles(unittest.TestCase):
@@ -644,50 +611,113 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
             os.chdir(old_pwd)
 
 
-class TestPatienceDiffLibFiles_c(TestPatienceDiffLibFiles):
+class TestPatienceDiffLib_rs(TestPatienceDiffLib):
+    """Test class for the Rust implementation using PyO3 bindings."""
+    def setUp(self):
+        super(TestPatienceDiffLib, self).setUp()
+        try:
+            from . import _patiencediff_rs
+        except ImportError:
+            self.skipTest("Rust extension not built")
+        self._unique_lcs = _patiencediff_rs.unique_lcs_rs
+        self._recurse_matches = _patiencediff_rs.recurse_matches_rs
+        self._PatienceSequenceMatcher = (
+            _patiencediff_rs.PatienceSequenceMatcher_rs
+        )
+
+    def test_unhashable(self):
+        """We should get a proper exception here."""
+        # We need to be able to hash items in the sequence, lists are
+        # unhashable, and thus cannot be diffed
+        self.assertRaises(
+            TypeError, self._PatienceSequenceMatcher, None, [[]], []
+        )
+        self.assertRaises(
+            TypeError, self._PatienceSequenceMatcher, None, ["valid", []], []
+        )
+        self.assertRaises(
+            TypeError, self._PatienceSequenceMatcher, None, ["valid"], [[]]
+        )
+        self.assertRaises(
+            TypeError,
+            self._PatienceSequenceMatcher,
+            None,
+            ["valid"],
+            ["valid", []],
+        )
+
+
+class TestPatienceDiffLibFiles_rs(TestPatienceDiffLibFiles):
+    """Test class for file operations with the Rust implementation."""
     def setUp(self):
         super().setUp()
         try:
-            from . import _patiencediff_c
+            from . import _patiencediff_rs
         except ImportError:
-            self.skipTest("C extension not built")
+            self.skipTest("Rust extension not built")
         self._PatienceSequenceMatcher = (
-            _patiencediff_c.PatienceSequenceMatcher_c
+            _patiencediff_rs.PatienceSequenceMatcher_rs
         )
 
 
 class TestUsingCompiledIfAvailable(unittest.TestCase):
     def test_PatienceSequenceMatcher(self):
         try:
-            from ._patiencediff_c import PatienceSequenceMatcher_c
+            from ._patiencediff_rs import PatienceSequenceMatcher_rs
+            self.assertIs(
+                PatienceSequenceMatcher_rs, patiencediff.PatienceSequenceMatcher
+            )
         except ImportError:
             from ._patiencediff_py import PatienceSequenceMatcher_py
-
             self.assertIs(
                 PatienceSequenceMatcher_py,
                 patiencediff.PatienceSequenceMatcher,
             )
-        else:
-            self.assertIs(
-                PatienceSequenceMatcher_c, patiencediff.PatienceSequenceMatcher
-            )
 
     def test_unique_lcs(self):
         try:
-            from ._patiencediff_c import unique_lcs_c
+            from ._patiencediff_rs import unique_lcs_rs
+            self.assertIs(unique_lcs_rs, patiencediff.unique_lcs)
         except ImportError:
             from ._patiencediff_py import unique_lcs_py
-
             self.assertIs(unique_lcs_py, patiencediff.unique_lcs)
-        else:
-            self.assertIs(unique_lcs_c, patiencediff.unique_lcs)
 
     def test_recurse_matches(self):
         try:
-            from ._patiencediff_c import recurse_matches_c
+            from ._patiencediff_rs import recurse_matches_rs
+            self.assertIs(recurse_matches_rs, patiencediff.recurse_matches)
         except ImportError:
             from ._patiencediff_py import recurse_matches_py
-
             self.assertIs(recurse_matches_py, patiencediff.recurse_matches)
-        else:
-            self.assertIs(recurse_matches_c, patiencediff.recurse_matches)
+            
+    def test_run_implementation(self):
+        """Test that we can run the implementation that was loaded."""
+        # Simple test with some basic strings
+        a = "abcde"
+        b = "abXde"
+        
+        # Create a matcher and get blocks
+        matcher = patiencediff.PatienceSequenceMatcher(None, a, b)
+        blocks = matcher.get_matching_blocks()
+        
+        # Validate results - we should get two blocks plus sentinel
+        self.assertEqual(3, len(blocks))
+        self.assertEqual((0, 0, 2), blocks[0])  # "ab" match
+        self.assertEqual((3, 3, 2), blocks[1])  # "de" match
+        self.assertEqual((5, 5, 0), blocks[2])  # sentinel
+        
+        # Test that unique_lcs works
+        matches = patiencediff.unique_lcs(a, b)
+        self.assertEqual([(0, 0), (1, 1), (3, 3), (4, 4)], matches)
+
+
+if __name__ == "__main__":
+    # Check which implementation is loaded
+    try:
+        from . import _patiencediff_rs
+        print("Rust extension is loaded successfully!")
+    except ImportError:
+        print("Rust extension is not available, using Python implementation")
+        
+    # Run the tests
+    unittest.main()
