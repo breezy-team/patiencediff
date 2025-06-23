@@ -71,7 +71,7 @@ convention = "google"
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.11.13"
+    "ruff==0.12.0"
 ]
 
 [tool.cibuildwheel]
