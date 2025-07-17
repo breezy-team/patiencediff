@@ -226,12 +226,17 @@ impl PatienceSequenceMatcherRs {
         // Get matching blocks from the matcher
         let blocks = self.matcher.get_matching_blocks();
 
+        // Import difflib.Match
+        let difflib = py.import("difflib")?;
+        let match_class = difflib.getattr("Match")?;
+
         // Convert blocks to Python list
         let result = PyList::empty(py);
 
-        for &(a, b, n) in blocks {
-            let tuple = PyTuple::new(py, &[a, b, n])?;
-            result.append(tuple)?;
+        for &(a, b, size) in blocks {
+            // Create a Match named tuple instead of a regular tuple
+            let match_obj = match_class.call1((a, b, size))?;
+            result.append(match_obj)?;
         }
 
         Ok(result)
