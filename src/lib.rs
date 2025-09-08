@@ -269,11 +269,11 @@ impl PatienceSequenceMatcherRs {
                     let tuple = PyTuple::new(
                         py,
                         &[
-                            "equal".into_py(py),
-                            i1.into_py(py),
-                            i2.into_py(py),
-                            j1.into_py(py),
-                            j2.into_py(py),
+                            "equal".into_pyobject(py)?.into_any().unbind(),
+                            i1.into_pyobject(py)?.into_any().unbind(),
+                            i2.into_pyobject(py)?.into_any().unbind(),
+                            j1.into_pyobject(py)?.into_any().unbind(),
+                            j2.into_pyobject(py)?.into_any().unbind(),
                         ],
                     )?;
                     result.append(tuple)?;
@@ -282,11 +282,11 @@ impl PatienceSequenceMatcherRs {
                     let tuple = PyTuple::new(
                         py,
                         &[
-                            "replace".into_py(py),
-                            i1.into_py(py),
-                            i2.into_py(py),
-                            j1.into_py(py),
-                            j2.into_py(py),
+                            "replace".into_pyobject(py)?.into_any().unbind(),
+                            i1.into_pyobject(py)?.into_any().unbind(),
+                            i2.into_pyobject(py)?.into_any().unbind(),
+                            j1.into_pyobject(py)?.into_any().unbind(),
+                            j2.into_pyobject(py)?.into_any().unbind(),
                         ],
                     )?;
                     result.append(tuple)?;
@@ -295,11 +295,11 @@ impl PatienceSequenceMatcherRs {
                     let tuple = PyTuple::new(
                         py,
                         &[
-                            "delete".into_py(py),
-                            i1.into_py(py),
-                            i2.into_py(py),
-                            j1.into_py(py),
-                            j2.into_py(py),
+                            "delete".into_pyobject(py)?.into_any().unbind(),
+                            i1.into_pyobject(py)?.into_any().unbind(),
+                            i2.into_pyobject(py)?.into_any().unbind(),
+                            j1.into_pyobject(py)?.into_any().unbind(),
+                            j2.into_pyobject(py)?.into_any().unbind(),
                         ],
                     )?;
                     result.append(tuple)?;
@@ -308,11 +308,11 @@ impl PatienceSequenceMatcherRs {
                     let tuple = PyTuple::new(
                         py,
                         &[
-                            "insert".into_py(py),
-                            i1.into_py(py),
-                            i2.into_py(py),
-                            j1.into_py(py),
-                            j2.into_py(py),
+                            "insert".into_pyobject(py)?.into_any().unbind(),
+                            i1.into_pyobject(py)?.into_any().unbind(),
+                            i2.into_pyobject(py)?.into_any().unbind(),
+                            j1.into_pyobject(py)?.into_any().unbind(),
+                            j2.into_pyobject(py)?.into_any().unbind(),
                         ],
                     )?;
                     result.append(tuple)?;
@@ -353,11 +353,11 @@ impl PatienceSequenceMatcherRs {
                 let tuple = PyTuple::new(
                     py,
                     &[
-                        tag.into_py(py),
-                        i1.into_py(py),
-                        i2.into_py(py),
-                        j1.into_py(py),
-                        j2.into_py(py),
+                        tag.into_pyobject(py)?.into_any().unbind(),
+                        i1.into_pyobject(py)?.into_any().unbind(),
+                        i2.into_pyobject(py)?.into_any().unbind(),
+                        j1.into_pyobject(py)?.into_any().unbind(),
+                        j2.into_pyobject(py)?.into_any().unbind(),
                     ],
                 )?;
 

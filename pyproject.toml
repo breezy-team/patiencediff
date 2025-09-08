@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.2", "setuptools-rust>=1.5.0"]
+requires = ["setuptools>=77.0.0", "setuptools-rust>=1.5.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,10 +7,9 @@ name = "patiencediff"
 description = "Python implementation of the patiencediff algorithm"
 readme = "README.rst"
 maintainers = [{name = "Breezy Developers", email = "team@breezy-vcs.org"}]
-license = {text = "GNU GPLv2 or later"}
+license = "GPL-2.0-or-later"
 classifiers = [
     "Development Status :: 6 - Mature",
-    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -93,4 +92,5 @@ skip = """\
     cp312-macosx_x86_64 cp312-macosx_universal2 \
     cp313-macosx_x86_64 cp313-macosx_universal2 \
     cp314-macosx_x86_64 cp314-macosx_universal2 \
+    *cp314*
     """
