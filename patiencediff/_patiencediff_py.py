@@ -16,7 +16,19 @@
 
 import difflib
 from bisect import bisect
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import (
+    Callable,
+    Dict,
+    Generic,
+    Hashable,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    TypeVar,
+)
+
+T = TypeVar("T", bound=Hashable)
 
 
 class MaxRecursionDepth(Exception):
@@ -24,7 +36,7 @@ class MaxRecursionDepth(Exception):
         super().__init__("max recursion depth reached")
 
 
-def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
+def unique_lcs_py(a: Sequence[T], b: Sequence[T]) -> List[Tuple[int, int]]:
     """Find the longest common subset for unique lines.
 
     :param a: An indexable object (such as string or list of strings)
@@ -38,10 +50,9 @@ def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
     The longest common subset uses the Patience Sorting algorithm:
     http://en.wikipedia.org/wiki/Patience_sorting
     """
-    line: Any
     # set index[line in a] = position of line in a unless
     # a is a duplicate, in which case it's set to None
-    index: Dict[Any, Optional[int]] = {}
+    index: Dict[T, Optional[int]] = {}
     for i, line in enumerate(a):
         if line in index:
             index[line] = None
@@ -51,7 +62,7 @@ def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
     # that line doesn't occur exactly once in both,
     # in which case it's set to None
     btoa: List[Optional[int]] = [None] * len(b)
-    index2: Dict[Any, int] = {}
+    index2: Dict[T, int] = {}
     for pos, line in enumerate(b):
         next = index.get(line)
         if next is not None:
@@ -106,8 +117,8 @@ def unique_lcs_py(a: Sequence[Any], b: Sequence[Any]) -> List[Tuple[int, int]]:
 
 
 def recurse_matches_py(
-    a: Sequence[Any],
-    b: Sequence[Any],
+    a: Sequence[T],
+    b: Sequence[T],
     alo: int,
     blo: int,
     ahi: int,
@@ -198,36 +209,40 @@ def recurse_matches_py(
             answer.append((nahi + i, nbhi + i))
 
 
-def _collapse_sequences(matches):
+def _collapse_sequences(
+    matches: List[Tuple[int, int]],
+) -> List[Tuple[int, int, int]]:
     """Find sequences of lines.
 
     Given a sequence of [(line_in_a, line_in_b),]
     find regions where they both increment at the same time
     """
     answer = []
-    start_a = start_b = None
+    start_a: Optional[int] = None
+    start_b: Optional[int] = None
     length = 0
     for i_a, i_b in matches:
         if (
             start_a is not None
+            and start_b is not None
             and (i_a == start_a + length)
             and (i_b == start_b + length)
         ):
             length += 1
         else:
-            if start_a is not None:
+            if start_a is not None and start_b is not None:
                 answer.append((start_a, start_b, length))
             start_a = i_a
             start_b = i_b
             length = 1
 
-    if length != 0:
+    if length != 0 and start_a is not None and start_b is not None:
         answer.append((start_a, start_b, length))
 
     return answer
 
 
-def _check_consistency(answer):
+def _check_consistency(answer: List[Tuple[int, int, int]]) -> None:
     # For consistency sake, make sure all matches are only increasing
     next_a = -1
     next_b = -1
@@ -240,19 +255,28 @@ def _check_consistency(answer):
         next_b = b + match_len
 
 
-class PatienceSequenceMatcher_py(difflib.SequenceMatcher):
+class PatienceSequenceMatcher_py(difflib.SequenceMatcher, Generic[T]):
     """Compare a pair of sequences using longest common subset."""
 
     _do_check_consistency = True
+    # These are inherited from difflib.SequenceMatcher
+    a: Sequence[T]
+    b: Sequence[T]
+    matching_blocks: Optional[List[difflib.Match]]
 
-    def __init__(self, isjunk=None, a="", b="") -> None:
+    def __init__(
+        self,
+        isjunk: Optional[Callable[[T], bool]] = None,
+        a: Sequence[T] = "",  # type: ignore[assignment]
+        b: Sequence[T] = "",  # type: ignore[assignment]
+    ) -> None:
         if isjunk is not None:
             raise NotImplementedError(
                 "Currently we do not support isjunk for sequence matching"
             )
         difflib.SequenceMatcher.__init__(self, isjunk, a, b)
 
-    def get_matching_blocks(self):
+    def get_matching_blocks(self) -> List[difflib.Match]:
         """Return list of triples describing matching subsequences.
 
         Each triple is of the form (i, j, n), and means that
@@ -274,16 +298,22 @@ class PatienceSequenceMatcher_py(difflib.SequenceMatcher):
         if self.matching_blocks is not None:
             return self.matching_blocks
 
-        matches = []
+        matches: List[Tuple[int, int]] = []
         recurse_matches_py(
             self.a, self.b, 0, 0, len(self.a), len(self.b), matches, 10
         )
         # Matches now has individual line pairs of
         # line A matches line B, at the given offsets
-        self.matching_blocks = _collapse_sequences(matches)
-        self.matching_blocks.append((len(self.a), len(self.b), 0))
+        collapsed = _collapse_sequences(matches)
+        # Convert tuples to Match objects
+        self.matching_blocks = [
+            difflib.Match(a, b, size) for a, b, size in collapsed
+        ]
+        self.matching_blocks.append(difflib.Match(len(self.a), len(self.b), 0))
         if PatienceSequenceMatcher_py._do_check_consistency:
             if __debug__:
-                _check_consistency(self.matching_blocks)
+                _check_consistency(
+                    [(m.a, m.b, m.size) for m in self.matching_blocks]
+                )
 
         return self.matching_blocks

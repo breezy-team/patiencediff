@@ -19,7 +19,7 @@ import difflib
 import os
 import sys
 import time
-from typing import Type
+from typing import Iterator, List, Optional, Sequence, Type, Union
 
 __all__ = [
     "PatienceSequenceMatcher",
@@ -36,16 +36,16 @@ __version__ = (0, 2, 15)
 # so that you can override the default SequenceMatcher
 # this has been submitted as a patch to python
 def unified_diff(
-    a,
-    b,
-    fromfile="",
-    tofile="",
-    fromfiledate="",
-    tofiledate="",
-    n=3,
-    lineterm="\n",
-    sequencematcher=None,
-):
+    a: Sequence[str],
+    b: Sequence[str],
+    fromfile: str = "",
+    tofile: str = "",
+    fromfiledate: Union[str, float] = "",
+    tofiledate: Union[str, float] = "",
+    n: int = 3,
+    lineterm: str = "\n",
+    sequencematcher: Optional[Type[difflib.SequenceMatcher]] = None,
+) -> Iterator[str]:
     r"""Compare two sequences of lines; generate the delta as a unified diff.
 
     Unified diffs are a compact way of showing line changes and a few
@@ -111,7 +111,11 @@ def unified_diff(
                     yield "+" + line
 
 
-def unified_diff_files(a, b, sequencematcher=None):
+def unified_diff_files(
+    a: str,
+    b: str,
+    sequencematcher: Optional[Type[difflib.SequenceMatcher]] = None,
+) -> List[str]:
     """Generate the diff for two files."""
     # Should this actually be an error?
     if a == b:
@@ -133,8 +137,14 @@ def unified_diff_files(a, b, sequencematcher=None):
         time_b = os.stat(b).st_mtime  # noqa: F841
 
     # TODO: Include fromfiledate and tofiledate
-    return unified_diff(
-        lines_a, lines_b, fromfile=a, tofile=b, sequencematcher=sequencematcher
+    return list(
+        unified_diff(
+            lines_a,
+            lines_b,
+            fromfile=a,
+            tofile=b,
+            sequencematcher=sequencematcher,
+        )
     )
 
 
