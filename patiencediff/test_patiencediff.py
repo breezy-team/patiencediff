@@ -15,10 +15,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import difflib
 import os
 import shutil
 import tempfile
 import unittest
+from typing import Any, Callable, List, Sequence, Tuple, Type
 
 import patiencediff
 
@@ -26,22 +28,26 @@ from . import _patiencediff_py
 
 
 class TestPatienceDiffLib(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
-        self._unique_lcs = _patiencediff_py.unique_lcs_py
-        self._recurse_matches = _patiencediff_py.recurse_matches_py
-        self._PatienceSequenceMatcher = (
+        self._unique_lcs: Callable[..., List[Tuple[int, int]]] = (
+            _patiencediff_py.unique_lcs_py
+        )
+        self._recurse_matches: Callable[..., None] = (
+            _patiencediff_py.recurse_matches_py
+        )
+        self._PatienceSequenceMatcher: Type[difflib.SequenceMatcher] = (
             _patiencediff_py.PatienceSequenceMatcher_py
         )
 
-    def test_diff_unicode_string(self):
+    def test_diff_unicode_string(self) -> None:
         a = "".join([chr(i) for i in range(4000, 4500, 3)])
         b = "".join([chr(i) for i in range(4300, 4800, 2)])
         sm = self._PatienceSequenceMatcher(None, a, b)
         mb = sm.get_matching_blocks()
         self.assertEqual(35, len(mb))
 
-    def test_unique_lcs(self):
+    def test_unique_lcs(self) -> None:
         unique_lcs = self._unique_lcs
         self.assertEqual(unique_lcs("", ""), [])
         self.assertEqual(unique_lcs("", "a"), [])
@@ -60,9 +66,11 @@ class TestPatienceDiffLib(unittest.TestCase):
         )
         self.assertEqual(unique_lcs("acbac", "abc"), [(2, 1)])
 
-    def test_recurse_matches(self):
-        def test_one(a, b, matches):
-            test_matches = []
+    def test_recurse_matches(self) -> None:
+        def test_one(
+            a: Sequence[Any], b: Sequence[Any], matches: List[Tuple[int, int]]
+        ) -> None:
+            test_matches: List[Tuple[int, int]] = []
             self._recurse_matches(a, b, 0, 0, len(a), len(b), test_matches, 10)
             self.assertEqual(test_matches, matches)
 
@@ -95,7 +103,12 @@ class TestPatienceDiffLib(unittest.TestCase):
         # This is what it currently gives:
         test_one("aBccDe", "abccde", [(0, 0), (5, 5)])
 
-    def assertDiffBlocks(self, a, b, expected_blocks):
+    def assertDiffBlocks(
+        self,
+        a: Sequence[Any],
+        b: Sequence[Any],
+        expected_blocks: List[Tuple[int, int, int]],
+    ) -> None:
         """Check that the sequence matcher returns the correct blocks.
 
         :param a: A sequence to match
@@ -109,7 +122,7 @@ class TestPatienceDiffLib(unittest.TestCase):
         self.assertEqual((len(a), len(b), 0), last)
         self.assertEqual(expected_blocks, blocks)
 
-    def test_matching_blocks(self):
+    def test_matching_blocks(self) -> None:
         # Some basic matching tests
         self.assertDiffBlocks("", "", [])
         self.assertDiffBlocks([], [], [])
@@ -163,7 +176,7 @@ class TestPatienceDiffLib(unittest.TestCase):
         self.assertDiffBlocks("abbabbbb", "cabbabbc", [])
         self.assertDiffBlocks("bbbbbbbb", "cbbbbbbc", [])
 
-    def test_matching_blocks_tuples(self):
+    def test_matching_blocks_tuples(self) -> None:
         # Some basic matching tests
         self.assertDiffBlocks([], [], [])
         self.assertDiffBlocks([("a",), ("b",), ("c,")], [], [])
@@ -193,8 +206,10 @@ class TestPatienceDiffLib(unittest.TestCase):
             [(0, 0, 1), (2, 2, 1)],
         )
 
-    def test_opcodes(self):
-        def chk_ops(a, b, expected_codes):
+    def test_opcodes(self) -> None:
+        def chk_ops(
+            a: Sequence[Any], b: Sequence[Any], expected_codes: List[Any]
+        ) -> None:
             s = self._PatienceSequenceMatcher(None, a, b)
             self.assertEqual(expected_codes, s.get_opcodes())
 
@@ -308,8 +323,13 @@ class TestPatienceDiffLib(unittest.TestCase):
             ],
         )
 
-    def test_grouped_opcodes(self):
-        def chk_ops(a, b, expected_codes, n=3):
+    def test_grouped_opcodes(self) -> None:
+        def chk_ops(
+            a: Sequence[Any],
+            b: Sequence[Any],
+            expected_codes: List[Any],
+            n: int = 3,
+        ) -> None:
             s = self._PatienceSequenceMatcher(None, a, b)
             self.assertEqual(expected_codes, list(s.get_grouped_opcodes(n)))
 
@@ -366,7 +386,7 @@ class TestPatienceDiffLib(unittest.TestCase):
             [[("equal", 3, 6, 3, 6), ("insert", 6, 6, 6, 7)]],
         )
 
-    def test_multiple_ranges(self):
+    def test_multiple_ranges(self) -> None:
         # There was an earlier bug where we used a bad set of ranges,
         # this triggers that specific bug, to make sure it doesn't regress
         self.assertDiffBlocks(
@@ -431,7 +451,7 @@ pynff pzq_zxqve(Pbzznaq):
             [(0, 0, 1), (1, 4, 2), (9, 19, 1), (12, 23, 3)],
         )
 
-    def test_patience_unified_diff(self):
+    def test_patience_unified_diff(self) -> None:
         txt_a = ["hello there\n", "world\n", "how are you today?\n"]
         txt_b = ["hello there\n", "how are you today?\n"]
         unified_diff = patiencediff.unified_diff
@@ -490,7 +510,7 @@ pynff pzq_zxqve(Pbzznaq):
             list(unified_diff(txt_a, txt_b, sequencematcher=psm)),
         )
 
-    def test_patience_unified_diff_with_dates(self):
+    def test_patience_unified_diff_with_dates(self) -> None:
         txt_a = ["hello there\n", "world\n", "how are you today?\n"]
         txt_b = ["hello there\n", "how are you today?\n"]
         unified_diff = patiencediff.unified_diff
@@ -519,20 +539,20 @@ pynff pzq_zxqve(Pbzznaq):
 
 
 class TestPatienceDiffLibFiles(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
-        self._PatienceSequenceMatcher = (
+        self._PatienceSequenceMatcher: Type[difflib.SequenceMatcher] = (
             _patiencediff_py.PatienceSequenceMatcher_py
         )
         self.test_dir = tempfile.mkdtemp()
         self.addCleanup(lambda: shutil.rmtree(self.test_dir))
 
-    def test_patience_unified_diff_files(self):
-        txt_a = [b"hello there\n", b"world\n", b"how are you today?\n"]
-        txt_b = [b"hello there\n", b"how are you today?\n"]
-        with open(os.path.join(self.test_dir, "a1"), "wb") as f:
+    def test_patience_unified_diff_files(self) -> None:
+        txt_a = ["hello there\n", "world\n", "how are you today?\n"]
+        txt_b = ["hello there\n", "how are you today?\n"]
+        with open(os.path.join(self.test_dir, "a1"), "w") as f:
             f.writelines(txt_a)
-        with open(os.path.join(self.test_dir, "b1"), "wb") as f:
+        with open(os.path.join(self.test_dir, "b1"), "w") as f:
             f.writelines(txt_b)
 
         unified_diff_files = patiencediff.unified_diff_files
@@ -612,7 +632,7 @@ class TestPatienceDiffLibFiles(unittest.TestCase):
 class TestPatienceDiffLib_rs(TestPatienceDiffLib):
     """Test class for the Rust implementation using PyO3 bindings."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         super(TestPatienceDiffLib, self).setUp()
         try:
             from . import _patiencediff_rs
@@ -624,7 +644,7 @@ class TestPatienceDiffLib_rs(TestPatienceDiffLib):
             _patiencediff_rs.PatienceSequenceMatcher_rs
         )
 
-    def test_unhashable(self):
+    def test_unhashable(self) -> None:
         """We should get a proper exception here."""
         # We need to be able to hash items in the sequence, lists are
         # unhashable, and thus cannot be diffed
@@ -649,7 +669,7 @@ class TestPatienceDiffLib_rs(TestPatienceDiffLib):
 class TestPatienceDiffLibFiles_rs(TestPatienceDiffLibFiles):
     """Test class for file operations with the Rust implementation."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         try:
             from . import _patiencediff_rs
@@ -661,7 +681,7 @@ class TestPatienceDiffLibFiles_rs(TestPatienceDiffLibFiles):
 
 
 class TestUsingCompiledIfAvailable(unittest.TestCase):
-    def test_PatienceSequenceMatcher(self):
+    def test_PatienceSequenceMatcher(self) -> None:
         try:
             from ._patiencediff_rs import PatienceSequenceMatcher_rs
 
@@ -677,7 +697,7 @@ class TestUsingCompiledIfAvailable(unittest.TestCase):
                 patiencediff.PatienceSequenceMatcher,
             )
 
-    def test_unique_lcs(self):
+    def test_unique_lcs(self) -> None:
         try:
             from ._patiencediff_rs import unique_lcs_rs
 
@@ -687,7 +707,7 @@ class TestUsingCompiledIfAvailable(unittest.TestCase):
 
             self.assertIs(unique_lcs_py, patiencediff.unique_lcs)
 
-    def test_recurse_matches(self):
+    def test_recurse_matches(self) -> None:
         try:
             from ._patiencediff_rs import recurse_matches_rs
 
@@ -697,7 +717,7 @@ class TestUsingCompiledIfAvailable(unittest.TestCase):
 
             self.assertIs(recurse_matches_py, patiencediff.recurse_matches)
 
-    def test_run_implementation(self):
+    def test_run_implementation(self) -> None:
         """Test that we can run the implementation that was loaded."""
         # Simple test with some basic strings
         a = "abcde"

@@ -16,11 +16,12 @@
 
 import difflib
 import sys
+from typing import List, Optional
 
 from . import PatienceSequenceMatcher, unified_diff_files
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     import optparse
 
     p = optparse.OptionParser(
@@ -58,6 +59,7 @@ def main(argv=None):
 
     for line in unified_diff_files(args[0], args[1], sequencematcher=matcher):
         sys.stdout.write(line)
+    return 0
 
 
 sys.exit(main(sys.argv[1:]))
