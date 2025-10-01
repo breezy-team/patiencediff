@@ -70,7 +70,7 @@ convention = "google"
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.12.12",
+    "ruff==0.13.2",
     "mypy>=1.0.0"
 ]
 
