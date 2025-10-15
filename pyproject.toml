@@ -15,6 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Operating System :: POSIX",
@@ -92,7 +93,7 @@ environment = {PATH="$HOME/.cargo/bin:$PATH"}
 before-build = "pip install -U setuptools-rust && curl https://sh.rustup.rs -sSf | sh -s -- --profile=minimal -y && rustup show"
 
 [tool.cibuildwheel.linux]
-skip = "*-musllinux_* *cp314*"
+skip = "*-musllinux_*"
 archs = ["auto", "aarch64"]
 before-build = "pip install -U setuptools-rust && yum -y install libatomic && curl https://sh.rustup.rs -sSf | sh -s -- --profile=minimal -y && rustup show"
 
@@ -104,7 +105,5 @@ skip = """\
     cp310-macosx_x86_64 cp310-macosx_universal2 \
     cp311-macosx_x86_64 cp311-macosx_universal2 \
     cp312-macosx_x86_64 cp312-macosx_universal2 \
-    cp313-macosx_x86_64 cp313-macosx_universal2 \
-    cp314-macosx_x86_64 cp314-macosx_universal2 \
-    *cp314*
+    cp313-macosx_x86_64 cp313-macosx_universal2
     """
