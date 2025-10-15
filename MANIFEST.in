@@ -1,3 +1,5 @@
 include AUTHORS
 include README.rst
 include COPYING
+recursive-include src *.rs
+include Cargo.toml
