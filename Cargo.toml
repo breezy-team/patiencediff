@@ -13,4 +13,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 patiencediff = { version = "0.2.1", default-features = false }
-pyo3 = { version = "0.24.0", features = ["extension-module"] }
+pyo3 = { version = "0.26", features = ["extension-module"] }

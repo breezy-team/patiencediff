@@ -49,19 +49,19 @@ fn unique_lcs_rs<'py>(
 }
 
 /// Python item wrapper that implements the necessary traits for patiencediff crate
-struct PyItem(PyObject);
+struct PyItem(Py<PyAny>);
 
-// Implement Clone for PyItem using clone_ref() for PyObject
+// Implement Clone for PyItem using clone_ref() for Py<PyAny>
 impl Clone for PyItem {
     fn clone(&self) -> Self {
-        Python::with_gil(|py| PyItem(self.0.clone_ref(py)))
+        Python::attach(|py| PyItem(self.0.clone_ref(py)))
     }
 }
 
 // Define equality for PyItem that uses Python's eq
 impl PartialEq for PyItem {
     fn eq(&self, other: &Self) -> bool {
-        Python::with_gil(|py| {
+        Python::attach(|py| {
             let a = self.0.extract::<Bound<PyAny>>(py).unwrap();
             let b = other.0.extract::<Bound<PyAny>>(py).unwrap();
             a.eq(&b).unwrap_or(false)
@@ -74,7 +74,7 @@ impl Eq for PyItem {}
 // Define hashing for PyItem that uses Python's hash
 impl std::hash::Hash for PyItem {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let hash_value = Python::with_gil(|py| {
+        let hash_value = Python::attach(|py| {
             let obj = self.0.extract::<Bound<PyAny>>(py).unwrap();
             match obj.hash() {
                 Ok(hash) => hash,
@@ -167,7 +167,7 @@ struct PatienceSequenceMatcherRs {
 #[pymethods]
 impl PatienceSequenceMatcherRs {
     #[new]
-    fn new(py: Python<'_>, _junk: Option<PyObject>, a: PyObject, b: PyObject) -> PyResult<Self> {
+    fn new(py: Python<'_>, _junk: Option<Py<PyAny>>, a: Py<PyAny>, b: Py<PyAny>) -> PyResult<Self> {
         // Extract sequences
         let a_any = a.extract::<Bound<PyAny>>(py)?;
         let b_any = b.extract::<Bound<PyAny>>(py)?;
