@@ -173,8 +173,8 @@ impl PatienceSequenceMatcherRs {
         let b_any = b.extract::<Bound<PyAny>>(py)?;
 
         // Convert to sequences
-        let a_seq = a_any.downcast::<PySequence>()?;
-        let b_seq = b_any.downcast::<PySequence>()?;
+        let a_seq = a_any.cast::<PySequence>()?;
+        let b_seq = b_any.cast::<PySequence>()?;
 
         let a_len = a_seq.len()?;
         let b_len = b_seq.len()?;
