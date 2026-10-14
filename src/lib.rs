@@ -161,7 +161,14 @@ fn recurse_matches_rs<'py>(
 /// The PatienceSequenceMatcher class
 #[pyclass(name = "PatienceSequenceMatcher_rs")]
 struct PatienceSequenceMatcherRs {
-    matcher: patiencediff::SequenceMatcher<PyItem>,
+    a: Vec<PyItem>,
+    b: Vec<PyItem>,
+}
+
+impl PatienceSequenceMatcherRs {
+    fn matcher(&self) -> patiencediff::SequenceMatcher<'_, PyItem> {
+        patiencediff::SequenceMatcher::new(&self.a, &self.b)
+    }
 }
 
 #[pymethods]
@@ -208,10 +215,10 @@ impl PatienceSequenceMatcherRs {
             b_items.push(PyItem(item.into()));
         }
 
-        // Create and return the matcher
-        let matcher = patiencediff::SequenceMatcher::new(&a_items, &b_items);
-
-        Ok(Self { matcher })
+        Ok(Self {
+            a: a_items,
+            b: b_items,
+        })
     }
 
     /// Return list of triples describing matching subsequences.
@@ -222,9 +229,10 @@ impl PatienceSequenceMatcherRs {
     ///
     /// The last triple is a dummy, (len(a), len(b), 0), and is the only
     /// triple with n==0.
-    fn get_matching_blocks<'py>(&mut self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    fn get_matching_blocks<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
         // Get matching blocks from the matcher
-        let blocks = self.matcher.get_matching_blocks();
+        let mut matcher = self.matcher();
+        let blocks = matcher.get_matching_blocks();
 
         // Import difflib.Match
         let difflib = py.import("difflib")?;
@@ -256,9 +264,10 @@ impl PatienceSequenceMatcherRs {
     /// 'insert':   b[j1:j2] should be inserted at a[i1:i1].
     ///                Note that i1==i2 in this case.
     /// 'equal':    a[i1:i2] == b[j1:j2]
-    fn get_opcodes<'py>(&mut self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    fn get_opcodes<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
         // Get opcodes directly from the matcher
-        let opcodes = self.matcher.get_opcodes();
+        let mut matcher = self.matcher();
+        let opcodes = matcher.get_opcodes();
 
         // Convert opcodes to Python list
         let result = PyList::empty(py);
@@ -327,14 +336,14 @@ impl PatienceSequenceMatcherRs {
     ///
     /// Each group is in the same format as returned by get_opcodes().
     fn get_grouped_opcodes<'py>(
-        &mut self,
+        &self,
         py: Python<'py>,
         n: Option<usize>,
     ) -> PyResult<Bound<'py, PyList>> {
         let n = n.unwrap_or(3);
 
         // Get grouped opcodes directly from the matcher
-        let grouped_opcodes = self.matcher.get_grouped_opcodes(n);
+        let grouped_opcodes = self.matcher().get_grouped_opcodes(n);
 
         // Convert to Python list
         let result = PyList::empty(py);
